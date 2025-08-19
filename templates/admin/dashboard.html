@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Painel de Admin{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h1>Painel de Administrador</h1>
+    <p>Bem-vindo, {{ current_user.email }}!</p>
+
+    {% if current_user.role == 'admin' and not current_user.company_id %}
+    <div class="alert alert-warning">Você é um administrador, mas ainda não foi associado a uma empresa. Por favor, contate o Administrador Geral.</div>
+
+    {% elif current_user.role == 'admin' and current_user.company_id %}
+    <div class="card mb-4">
+        <div class="card-header">{{ stats.get('title', 'Métricas') }}</div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Projetos</h5>
+                    <p class="fs-4">{{ stats.get('project_count', 0) }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Camadas</h5>
+                    <p class="fs-4">{{ stats.get('layer_count', 0) }} / {{ current_user.company.layer_limit }}</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Armazenamento</h5>
+                    <p class="fs-4">{{ "%.2f"|format(stats.get('storage_usage', 0)) }} / {{ current_user.company.storage_limit_mb }} MB</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-group">
+      <a href="{{ url_for('manage_projects') }}" class="list-group-item list-group-item-action">Gerenciar Projetos</a>
+      <a href="{{ url_for('upload_layer_page') }}" class="list-group-item list-group-item-action">Fazer Upload de Camada</a>
+      <a href="{{ url_for('manage_shared_maps') }}" class="list-group-item list-group-item-action">Gerenciar Mapas Públicos</a>
+    </div>
+    {% endif %}
+
+    {% if current_user.role == 'super_admin' %}
+    <div class="card mb-4">
+        <div class="card-header">{{ stats.get('title', 'Métricas') }}</div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-3"><h5>Empresas</h5><p class="fs-4">{{ stats.get('company_count', 0) }}</p></div>
+                <div class="col-md-3"><h5>Admins</h5><p class="fs-4">{{ stats.get('user_count', 0) }}</p></div>
+                <div class="col-md-3"><h5>Projetos</h5><p class="fs-4">{{ stats.get('project_count', 0) }}</p></div>
+                <div class="col-md-3"><h5>Camadas</h5><p class="fs-4">{{ stats.get('layer_count', 0) }}</p></div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <h5 class="mt-3">Área do Super Admin</h5>
+    <div class="list-group">
+      <a href="{{ url_for('manage_companies') }}" class="list-group-item list-group-item-action">Gerenciar Empresas</a>
+      <a href="{{ url_for('manage_users') }}" class="list-group-item list-group-item-action">Gerenciar Administradores</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
