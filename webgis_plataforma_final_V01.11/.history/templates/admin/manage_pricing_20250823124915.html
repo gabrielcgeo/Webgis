@@ -1,0 +1,408 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fas fa-dollar-sign text-warning me-2"></i>
+        Configurações de Preços
+    </h2>
+    <a href="{{ url_for('edit_pricing_config', id=0) }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nova Configuração
+    </a>
+</div>
+
+<div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Informação:</strong> Estas configurações definem como os preços são calculados na calculadora pública. 
+    Você pode definir preços em camadas (tiers) para diferentes volumes.
+</div>
+
+<div class="row">
+    {% for config in configs %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-tag me-2"></i>{{ config.name }}
+                </h5>
+                <span class="badge bg-{{ 'primary' if config.category == 'base' else 'success' if config.category == 'tier' else 'warning' }}">
+                    {{ config.category.title() }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Preço Base:</label>
+                    <div class="fw-bold text-success">R$ {{ "%.4f"|format(config.base_price) }}</div>
+                </div>
+
+                {% if config.tier_1_limit %}
+                <div class="mb-3">
+                    <label class="form-label text-muted">Estrutura de Tiers:</label>
+                    <div class="small">
+                        <div>Tier 1 (0-{{ config.tier_1_limit }}): R$ {{ "%.4f"|format(config.base_price) }}</div>
+                        {% if config.tier_1_price %}
+                        <div>Tier 2 ({{ config.tier_1_limit + 1 }}-{{ config.tier_2_limit or 'Ilimitado' }}): R$ {{ "%.4f"|format(config.tier_1_price) }}</div>
+                        {% endif %}
+                        {% if config.tier_2_price %}
+                        <div>Tier 3 ({{ config.tier_2_limit + 1 }}-{{ config.tier_3_limit or 'Ilimitado' }}): R$ {{ "%.4f"|format(config.tier_2_price) }}</div>
+                        {% endif %}
+                        {% if config.tier_3_price %}
+                        <div>Tier 4+ ({{ config.tier_3_limit + 1 }}+): R$ {{ "%.4f"|format(config.tier_3_price) }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Fator de Peso:</label>
+                    <div class="fw-bold">{{ config.weight_factor }}x</div>
+                </div>
+
+                <div class="mb-3">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        Atualizado em: {{ config.updated_at.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('edit_pricing_config', id=config.id) }}" class="btn btn-outline-primary btn-sm flex-fill">
+                        <i class="fas fa-edit me-1"></i>Editar
+                    </a>
+                    <form method="post" action="{{ url_for('delete_pricing_config', id=config.id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                onclick="return confirm('Desativar esta configuração de preços?')">
+                            <i class="fas fa-trash me-1"></i>Desativar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+            <h5>Nenhuma configuração de preços encontrada</h5>
+            <p>Crie sua primeira configuração de preços para começar.</p>
+            <a href="{{ url_for('edit_pricing_config', id=0) }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Criar Primeira Configuração
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-calculator me-2"></i>
+                Testar Calculadora
+            </h5>
+        </div>
+        <div class="card-body">
+            <p>Teste a calculadora com as configurações atuais:</p>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#calculatorModal">
+                <i class="fas fa-calculator me-2"></i>
+                Abrir Calculadora
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal da Calculadora -->
+<div class="modal fade" id="calculatorModal" tabindex="-1" aria-labelledby="calculatorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="calculatorModalLabel">
+                    <i class="fas fa-calculator me-2"></i>Calculadora de Preços WebGIS
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="pricingForm">
+                    <div class="row">
+                        <!-- Coluna 1 -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="projects" class="form-label">
+                                    <i class="fas fa-project-diagram text-primary me-2"></i>Número de Projetos
+                                </label>
+                                <input type="number" class="form-control" id="projects" min="0" value="5">
+                                <small class="form-text text-muted">Projetos para organizar suas camadas</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="layers" class="form-label">
+                                    <i class="fas fa-layer-group text-success me-2"></i>Número de Camadas
+                                </label>
+                                <input type="number" class="form-control" id="layers" min="0" value="100">
+                                <small class="form-text text-muted">Shapefiles, GeoTIFFs, KMLs, etc.</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="public_maps" class="form-label">
+                                    <i class="fas fa-globe-americas text-info me-2"></i>Mapas Públicos
+                                </label>
+                                <input type="number" class="form-control" id="public_maps" min="0" value="10">
+                                <small class="form-text text-muted">Mapas compartilhados publicamente</small>
+                            </div>
+                        </div>
+
+                        <!-- Coluna 2 -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="page_views" class="form-label">
+                                    <i class="fas fa-eye text-warning me-2"></i>Visualizações/Mês
+                                </label>
+                                <input type="number" class="form-control" id="page_views" min="0" value="50000">
+                                <small class="form-text text-muted">Acessos aos mapas públicos</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="employees" class="form-label">
+                                    <i class="fas fa-users text-secondary me-2"></i>Funcionários Cadastrados
+                                </label>
+                                <input type="number" class="form-control" id="employees" min="0" value="15">
+                                <small class="form-text text-muted">Usuários com acesso à plataforma</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="server_usage" class="form-label">
+                                    <i class="fas fa-server text-danger me-2"></i>Uso do Servidor (GB)
+                                </label>
+                                <input type="number" class="form-control" id="server_usage" min="0" step="0.1" value="50">
+                                <small class="form-text text-muted">Armazenamento + transferência de dados</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <button type="button" class="btn btn-primary btn-lg" onclick="calculatePrice()">
+                                <i class="fas fa-calculator me-2"></i>Calcular Preço
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary ms-2" onclick="resetForm()">
+                                <i class="fas fa-undo me-2"></i>Limpar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Loading -->
+                <div id="pricing-loading" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Calculando...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Calculando preços...</p>
+                </div>
+
+                <!-- Resultado -->
+                <div id="pricing-result" class="mt-4" style="display: none;">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Resultado do Cálculo
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h6 class="text-muted">Preço Mensal</h6>
+                                        <h3 class="text-success" id="total-price">R$ 0,00</h3>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h6 class="text-muted">Preço Anual</h6>
+                                        <h4 class="text-info" id="annual-price">R$ 0,00</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h6 class="text-muted">Margem Estimada</h6>
+                                        <h4 class="text-warning" id="profit-margin">0%</h4>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6 class="text-muted">ROI Estimado</h6>
+                                    <h4 class="text-success">+233%</h4>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <div id="price-breakdown"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
+    </a>
+</div>
+{% endblock %}
+
+<!-- JavaScript para a Calculadora -->
+<script>
+// Função para testar se o JavaScript está funcionando
+function testJavaScript() {
+    console.log('JavaScript funcionando!');
+    alert('JavaScript está funcionando corretamente!');
+}
+
+async function calculatePrice() {
+    console.log('Função calculatePrice chamada');
+    const form = document.getElementById('pricingForm');
+    const resultDiv = document.getElementById('pricing-result');
+    const loadingDiv = document.getElementById('pricing-loading');
+    
+    if (!form || !resultDiv || !loadingDiv) {
+        console.error('Elementos não encontrados:', { form, resultDiv, loadingDiv });
+        alert('Erro: Elementos da calculadora não encontrados');
+        return;
+    }
+    
+    // Mostrar loading
+    loadingDiv.style.display = 'block';
+    resultDiv.style.display = 'none';
+    
+    const data = {
+        projects: parseInt(document.getElementById('projects').value) || 0,
+        layers: parseInt(document.getElementById('layers').value) || 0,
+        public_maps: parseInt(document.getElementById('public_maps').value) || 0,
+        page_views: parseInt(document.getElementById('page_views').value) || 0,
+        employees: parseInt(document.getElementById('employees').value) || 0,
+        server_usage: parseFloat(document.getElementById('server_usage').value) || 0
+    };
+    
+    console.log('Dados para cálculo:', data);
+    
+    try {
+        const response = await fetch('/api/pricing/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        console.log('Resposta da API:', response);
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('Resultado da API:', result);
+        displayResult(result);
+        
+    } catch (error) {
+        console.error('Erro na função calculatePrice:', error);
+        alert(`Erro ao calcular preços: ${error.message}`);
+    } finally {
+        loadingDiv.style.display = 'none';
+    }
+}
+
+function displayResult(result) {
+    console.log('Função displayResult chamada com:', result);
+    const totalPriceElement = document.getElementById('total-price');
+    const breakdownElement = document.getElementById('price-breakdown');
+    const resultDiv = document.getElementById('pricing-result');
+    
+    if (!totalPriceElement || !breakdownElement || !resultDiv) {
+        console.error('Elementos de resultado não encontrados');
+        return;
+    }
+    
+    // Formatar preço total
+    totalPriceElement.textContent = `R$ ${result.total_cost.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    
+    // Atualizar preços anuais e margens
+    const annualPrice = result.total_cost * 12;
+    document.getElementById('annual-price').textContent = `R$ ${annualPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    
+    // Calcular margem estimada (assumindo 70% de margem)
+    const estimatedProfit = result.total_cost * 0.7;
+    const profitMargin = ((estimatedProfit / result.total_cost) * 100).toFixed(1);
+    document.getElementById('profit-margin').textContent = `${profitMargin}%`;
+    
+    // Criar breakdown
+    let breakdownHTML = '<h6>Detalhamento dos Custos:</h6>';
+    
+    const labels = {
+        'projects': 'Projetos',
+        'layers': 'Camadas', 
+        'public_maps': 'Mapas Públicos',
+        'page_views': 'Visualizações',
+        'employees': 'Funcionários',
+        'server_usage': 'Servidor'
+    };
+    
+    for (const [key, item] of Object.entries(result.breakdown)) {
+        if (item.weighted_cost > 0) {
+            breakdownHTML += `
+                <div class="breakdown-item d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <span><strong>${labels[key]}:</strong></span>
+                    <span class="text-success">R$ ${item.weighted_cost.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                </div>
+            `;
+        }
+    }
+    
+    breakdownElement.innerHTML = breakdownHTML;
+    
+    resultDiv.style.display = 'block';
+    console.log('Resultado exibido com sucesso');
+}
+
+function resetForm() {
+    console.log('Função resetForm chamada');
+    document.getElementById('pricingForm').reset();
+    document.getElementById('pricing-result').style.display = 'none';
+    document.getElementById('pricing-loading').style.display = 'none';
+    
+    // Restaurar valores padrão
+    document.getElementById('projects').value = '5';
+    document.getElementById('layers').value = '100';
+    document.getElementById('public_maps').value = '10';
+    document.getElementById('page_views').value = '50000';
+    document.getElementById('employees').value = '15';
+    document.getElementById('server_usage').value = '50';
+}
+
+// Verificar se o modal está funcionando
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM carregado, verificando modal...');
+    
+    // Verificar se o modal existe
+    const modal = document.getElementById('calculatorModal');
+    if (modal) {
+        console.log('Modal encontrado:', modal);
+        
+        // Adicionar listener para quando o modal abrir
+        modal.addEventListener('show.bs.modal', function () {
+            console.log('Modal abrindo...');
+        });
+        
+        modal.addEventListener('shown.bs.modal', function () {
+            console.log('Modal aberto!');
+        });
+    } else {
+        console.error('Modal não encontrado!');
+    }
+});
+</script>

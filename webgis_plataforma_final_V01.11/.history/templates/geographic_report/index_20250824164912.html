@@ -1,0 +1,416 @@
+{% extends 'layout.html' %}
+{% block title %}Relatório Geográfico - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header do Relatório Geográfico -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-map-marked-alt text-primary me-2"></i>
+                        Relatório Geográfico
+                    </h1>
+                    <p class="text-muted mb-0">Transforme dados geográficos em narrativas visuais interativas</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-lg" onclick="createNewReport()">
+                        <i class="fas fa-plus me-2"></i>
+                        Criar Novo Relatório
+                    </button>
+                    <a href="{{ url_for('geographic_report_templates') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-layer-group me-2"></i>
+                        Templates
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas Rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1" id="total-reports">0</h4>
+                            <p class="mb-0">Total de Relatórios</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-file-alt fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1" id="published-reports">0</h4>
+                            <p class="mb-0">Publicados</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-globe fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1" id="draft-reports">0</h4>
+                            <p class="mb-0">Rascunhos</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-edit fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="mb-1" id="total-views">0</h4>
+                            <p class="mb-0">Visualizações</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-eye fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros e Busca -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="search-reports" placeholder="Buscar relatórios...">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="status-filter">
+                                <option value="">Todos os Status</option>
+                                <option value="draft">Rascunhos</option>
+                                <option value="published">Publicados</option>
+                                <option value="archived">Arquivados</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="sort-reports">
+                                <option value="updated_at">Mais Recentes</option>
+                                <option value="title">Título A-Z</option>
+                                <option value="views">Mais Visualizados</option>
+                                <option value="created_at">Data de Criação</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-outline-primary w-100" onclick="applyFilters()">
+                                <i class="fas fa-filter me-2"></i>Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Relatórios -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Meus Relatórios</h5>
+                </div>
+                <div class="card-body">
+                    <div id="reports-container">
+                        <!-- Relatórios serão carregados aqui dinamicamente -->
+                        <div class="text-center py-5">
+                            <i class="fas fa-spinner fa-spin fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">Carregando relatórios...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Criação Rápida -->
+<div class="modal fade" id="quickCreateModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Criar Novo Relatório</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="quick-create-form">
+                    <div class="mb-3">
+                        <label class="form-label">Título do Relatório</label>
+                        <input type="text" class="form-control" id="quick-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" id="quick-description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Template Base</label>
+                        <select class="form-select" id="quick-template">
+                            <option value="">Sem template (começar do zero)</option>
+                            <optgroup label="📊 Análises e Relatórios">
+                                <option value="corporate-report">Relatório Corporativo Profissional</option>
+                                <option value="market-analysis">Análise de Mercado</option>
+                                <option value="data-analysis">Análise de Dados</option>
+                                <option value="location-analysis">Análise de Localização</option>
+                            </optgroup>
+                            <optgroup label="📚 Educacional e Histórico">
+                                <option value="historical-timeline">Linha do Tempo Histórica</option>
+                                <option value="educational-guide">Guia Educacional</option>
+                            </optgroup>
+                            <optgroup label="🗺️ Turismo e Viagem">
+                                <option value="tourism-interactive">Turismo Interativo</option>
+                                <option value="travel-route">Roteiro de Viagem</option>
+                            </optgroup>
+                            <optgroup label="🏢 Projetos e Portfólios">
+                                <option value="project-portfolio">Portfólio de Projetos</option>
+                                <option value="events-map">Mapa de Eventos</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição do Template</label>
+                        <div id="template-description" class="form-text text-muted">
+                            Selecione um template para ver sua descrição
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="submitQuickCreate()">
+                    <i class="fas fa-rocket me-2"></i>Criar e Começar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Templates -->
+<div class="modal fade" id="templatesModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Templates de Relatório</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4" id="templates-grid">
+                    <!-- Templates serão carregados aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/geographic_report.js') }}"></script>
+<script>
+// Inicialização da página
+document.addEventListener('DOMContentLoaded', function() {
+    loadReports();
+    loadStatistics();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Busca em tempo real
+    document.getElementById('search-reports').addEventListener('input', debounce(function() {
+        applyFilters();
+    }, 300));
+    
+    // Filtros
+    document.getElementById('status-filter').addEventListener('change', applyFilters);
+    document.getElementById('sort-reports').addEventListener('change', applyFilters);
+    
+    // Template selection change
+    document.getElementById('quick-template').addEventListener('change', updateTemplateDescription);
+}
+
+function createNewReport() {
+    const modal = new bootstrap.Modal(document.getElementById('quickCreateModal'));
+    modal.show();
+}
+
+function showTemplates() {
+    loadTemplates();
+    const modal = new bootstrap.Modal(document.getElementById('templatesModal'));
+    modal.show();
+}
+
+function submitQuickCreate() {
+    const title = document.getElementById('quick-title').value;
+    const description = document.getElementById('quick-description').value;
+    const template = document.getElementById('quick-template').value;
+    
+    if (!title.trim()) {
+        alert('Por favor, insira um título para o relatório.');
+        return;
+    }
+    
+    // Configuração base do relatório
+    let config = {
+        template: template,
+        stops: [],
+        layers: [],
+        design: {
+            theme: 'default',
+            layout: 'classic',
+            colors: {
+                primary: '#007bff',
+                secondary: '#6c757d',
+                background: '#ffffff',
+                text: '#212529'
+            }
+        }
+    };
+    
+    // Configurações específicas para cada template
+    if (template === 'corporate-report') {
+        config.design.layout = 'professional';
+        config.design.theme = 'corporate';
+        config.design.colors = {
+            primary: '#2c3e50',
+            secondary: '#2980b9',
+            background: '#fcfcfc',
+            text: '#34495e'
+        };
+        config.structure = 'hierarchical';
+        config.navigation = 'sidebar';
+    } else if (template === 'market-analysis') {
+        config.design.layout = 'classic';
+        config.design.theme = 'business';
+        config.design.colors = {
+            primary: '#4A90E2',
+            secondary: '#27AE60',
+            background: '#ffffff',
+            text: '#2c3e50'
+        };
+    } else if (template === 'historical-timeline') {
+        config.design.layout = 'timeline';
+        config.design.theme = 'historical';
+        config.design.colors = {
+            primary: '#8E44AD',
+            secondary: '#E67E22',
+            background: '#f8f9fa',
+            text: '#2c3e50'
+        };
+    }
+    
+    // Criar relatório via API
+    fetch('/api/geographic-report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            title: title,
+            description: description,
+            config: config
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Fechar modal e redirecionar para edição
+            bootstrap.Modal.getInstance(document.getElementById('quickCreateModal')).hide();
+            window.location.href = `/geographic-report/edit/${data.report_id}`;
+        } else {
+            alert('Erro ao criar relatório: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao criar relatório. Tente novamente.');
+    });
+}
+
+function updateTemplateDescription() {
+    const templateSelect = document.getElementById('quick-template');
+    const descriptionDiv = document.getElementById('template-description');
+    const selectedTemplate = templateSelect.value;
+    
+    const templateDescriptions = {
+        'corporate-report': 'Template corporativo com estrutura hierárquica, navegação lateral e design profissional para relatórios empresariais. Inclui capítulos, subcapítulos e navegação lateral.',
+        'market-analysis': 'Template ideal para análises de mercado com foco em narrativa e dados geográficos. Perfeito para apresentações empresariais.',
+        'historical-timeline': 'Narrativa cronológica com eventos históricos e localizações geográficas. Ideal para projetos educacionais e históricos.',
+        'tourism-interactive': 'Mapa imersivo com pontos turísticos, fotos e informações detalhadas. Perfeito para guias turísticos.',
+        'location-analysis': 'Equilíbrio perfeito entre mapa e conteúdo para análises de localização. Ideal para estudos de viabilidade.',
+        'project-portfolio': 'Apresentação visual de projetos em formato de grid com mapa interativo. Perfeito para portfólios empresariais.',
+        'educational-guide': 'Template educativo com foco na narrativa e aprendizado geográfico. Ideal para materiais educacionais.',
+        'data-analysis': 'Template avançado para análise de dados com visualizações interativas. Perfeito para relatórios técnicos.',
+        'travel-route': 'Roteiro interativo com mapa imersivo e pontos de interesse. Ideal para planejamento de viagens.',
+        'events-map': 'Template equilibrado para mapeamento de eventos e atividades. Perfeito para calendários de eventos.'
+    };
+    
+    if (selectedTemplate && templateDescriptions[selectedTemplate]) {
+        descriptionDiv.innerHTML = `
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>${templateSelect.options[templateSelect.selectedIndex].text}</strong><br>
+                ${templateDescriptions[selectedTemplate]}
+            </div>
+        `;
+    } else {
+        descriptionDiv.innerHTML = '<span class="text-muted">Selecione um template para ver sua descrição</span>';
+    }
+}
+
+function loadReports() {
+    // Implementar carregamento de relatórios
+    console.log('Carregando relatórios...');
+}
+
+function loadStatistics() {
+    // Implementar carregamento de estatísticas
+    console.log('Carregando estatísticas...');
+}
+
+function loadTemplates() {
+    // Implementar carregamento de templates
+    console.log('Carregando templates...');
+}
+
+function applyFilters() {
+    // Implementar aplicação de filtros
+    console.log('Aplicando filtros...');
+}
+
+// Função utilitária para debounce
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+</script>
+{% endblock %}

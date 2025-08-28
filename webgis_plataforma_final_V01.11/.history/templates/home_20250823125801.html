@@ -1,0 +1,423 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <!-- Seção de Boas-vindas -->
+    <div class="col-lg-4 mb-4">
+      <div class="text-center py-5">
+        <h1 class="text-primary">Bem-vindo ao WebGIS</h1>
+        <p class="lead">Plataforma completa de geoprocessamento e análise espacial.</p>
+        <div class="d-flex gap-2 justify-content-center mb-4">
+          <a class="btn btn-primary btn-lg" href="{{ url_for('login') }}">
+            <i class="fas fa-sign-in-alt me-2"></i>Entrar
+          </a>
+          <a class="btn btn-outline-primary btn-lg" href="{{ url_for('precos') }}">
+            <i class="fas fa-tags me-2"></i>Ver Preços
+          </a>
+        </div>
+        
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">🌐 Portal da Empresa</h5>
+            <p class="card-text">Se você sabe a URL do portal da sua empresa, acesse diretamente:</p>
+            <code>/portal/&lt;slug&gt;</code>
+            <small class="d-block text-muted mt-2">Ex.: {{ request.host_url }}portal/minha-empresa</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de Recursos -->
+    <div class="col-lg-8">
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-primary mb-3">
+                <i class="fas fa-map-marked-alt"></i>
+              </div>
+              <h4>Mapas Interativos</h4>
+              <p class="text-muted">Crie mapas profissionais com dados geográficos avançados</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-success mb-3">
+                <i class="fas fa-layer-group"></i>
+              </div>
+              <h4>Camadas Personalizadas</h4>
+              <p class="text-muted">Organize seus dados em camadas temáticas e projetos</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-info mb-3">
+                <i class="fas fa-share-alt"></i>
+              </div>
+              <h4>Compartilhamento</h4>
+              <p class="text-muted">Compartilhe mapas públicos ou privados com sua equipe</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-warning mb-3">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h4>Análise Espacial</h4>
+              <p class="text-muted">Ferramentas avançadas para análise e visualização de dados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CTA para Preços -->
+      <div class="card bg-gradient-primary text-white border-0 shadow-lg">
+        <div class="card-body text-center py-4">
+          <h3 class="mb-3">
+            <i class="fas fa-calculator me-2"></i>Preços Transparentes
+          </h3>
+          <p class="lead mb-4">Descubra o plano ideal para sua empresa com nossa calculadora personalizada</p>
+          <a href="{{ url_for('precos') }}" class="btn btn-light btn-lg">
+            <i class="fas fa-tags me-2"></i>Ver Planos e Preços
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.card {
+  border: none;
+  border-radius: 15px;
+}
+
+.card-header {
+  border-radius: 15px 15px 0 0 !important;
+}
+
+.form-control:focus {
+  border-color: #00d28f;
+  box-shadow: 0 0 0 0.2rem rgba(0, 210, 143, 0.25);
+}
+
+.btn-primary {
+  background-color: #00d28f;
+  border-color: #00d28f;
+}
+
+.btn-primary:hover {
+  background-color: #00b377;
+  border-color: #00b377;
+}
+
+.text-primary {
+  color: #00d28f !important;
+}
+
+#price-breakdown {
+  font-size: 0.9em;
+}
+
+.breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding: 3px 8px;
+  background-color: rgba(0, 210, 143, 0.1);
+  border-radius: 5px;
+}
+
+.alert-success {
+  border-color: #00d28f;
+  background-color: rgba(0, 210, 143, 0.1);
+  color: #00805a;
+}
+</style>
+
+<script>
+async function calculatePrice() {
+    const form = document.getElementById('pricingForm');
+    const resultDiv = document.getElementById('pricing-result');
+    const loadingDiv = document.getElementById('pricing-loading');
+    
+    // Mostrar loading
+    loadingDiv.style.display = 'block';
+    resultDiv.style.display = 'none';
+    
+    const data = {
+        projects: parseInt(document.getElementById('projects').value) || 0,
+        layers: parseInt(document.getElementById('layers').value) || 0,
+        public_maps: parseInt(document.getElementById('public_maps').value) || 0,
+        page_views: parseInt(document.getElementById('page_views').value) || 0,
+        employees: parseInt(document.getElementById('employees').value) || 0,
+        server_usage: parseFloat(document.getElementById('server_usage').value) || 0
+    };
+    
+    try {
+        const response = await fetch('/api/pricing/calculate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Erro ao calcular preços');
+        }
+        
+        const result = await response.json();
+        displayResult(result);
+        
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao calcular preços. Tente novamente.');
+    } finally {
+        loadingDiv.style.display = 'none';
+    }
+}
+
+function displayResult(result) {
+    const totalPriceElement = document.getElementById('total-price');
+    const breakdownElement = document.getElementById('price-breakdown');
+    const resultDiv = document.getElementById('pricing-result');
+    
+    // Formatar preço total
+    totalPriceElement.textContent = `R$ ${result.total_cost.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    
+    // Atualizar preços anuais e margens
+    const annualPrice = result.total_cost * 12;
+    document.getElementById('annual-price').textContent = `R$ ${annualPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    
+    // Calcular margem estimada (assumindo 70% de margem)
+    const estimatedProfit = result.total_cost * 0.7;
+    const profitMargin = ((estimatedProfit / result.total_cost) * 100).toFixed(1);
+    document.getElementById('profit-margin').textContent = `${profitMargin}%`;
+    
+    // Criar breakdown
+    let breakdownHTML = '<h6>Detalhamento dos Custos:</h6>';
+    
+    const labels = {
+        'projects': 'Projetos',
+        'layers': 'Camadas', 
+        'public_maps': 'Mapas Públicos',
+        'page_views': 'Visualizações',
+        'employees': 'Funcionários',
+        'server_usage': 'Servidor'
+    };
+    
+    for (const [key, item] of Object.entries(result.breakdown)) {
+        if (item.weighted_cost > 0) {
+            breakdownHTML += `
+                <div class="breakdown-item">
+                    <span>${labels[key]}:</span>
+                    <span>R$ ${item.weighted_cost.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+  </div>
+            `;
+        }
+    }
+    
+    breakdownElement.innerHTML = breakdownHTML;
+    
+    // Atualizar comparação de planos
+    updatePlanComparison(result.total_cost);
+    
+    // Gerar recomendações
+    generateRecommendations(result);
+    
+    // Criar gráfico de distribuição de custos
+    createCostChart(result.breakdown);
+    
+    resultDiv.style.display = 'block';
+}
+
+function updatePlanComparison(totalCost) {
+    // Calcular preços dos planos baseado no custo total
+    const starterPrice = Math.max(totalCost * 0.8, 99.90);
+    const professionalPrice = totalCost * 1.1;
+    const enterprisePrice = totalCost * 1.3;
+    
+    document.getElementById('starter-price').textContent = `R$ ${starterPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('professional-price').textContent = `R$ ${professionalPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    document.getElementById('enterprise-price').textContent = `R$ ${enterprisePrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+}
+
+function generateRecommendations(result) {
+    const recommendationsDiv = document.getElementById('recommendations');
+    let recommendations = [];
+    
+    // Analisar breakdown e gerar recomendações
+    if (result.breakdown.projects && result.breakdown.projects.weighted_cost > result.total_cost * 0.4) {
+        recommendations.push('💡 Considere consolidar projetos para reduzir custos');
+    }
+    
+    if (result.breakdown.layers && result.breakdown.layers.weighted_cost > result.total_cost * 0.3) {
+        recommendations.push('🗺️ Otimize suas camadas para melhor performance');
+    }
+    
+    if (result.breakdown.page_views && result.breakdown.page_views.weighted_cost < result.total_cost * 0.1) {
+        recommendations.push('📊 Visualizações com boa relação custo-benefício');
+    }
+    
+    if (result.breakdown.server_usage && result.breakdown.server_usage.weighted_cost > result.total_cost * 0.2) {
+        recommendations.push('🖥️ Considere otimizar o uso do servidor');
+    }
+    
+    if (recommendations.length === 0) {
+        recommendations.push('✅ Sua configuração está bem balanceada!');
+    }
+    
+    recommendationsDiv.innerHTML = recommendations.map(rec => `<div class="mb-2">${rec}</div>`).join('');
+}
+
+function createCostChart(breakdown) {
+    const ctx = document.getElementById('costChart').getContext('2d');
+    
+    // Destruir gráfico anterior se existir
+    if (window.costChart) {
+        window.costChart.destroy();
+    }
+    
+    const labels = {
+        'projects': 'Projetos',
+        'layers': 'Camadas', 
+        'public_maps': 'Mapas Públicos',
+        'page_views': 'Visualizações',
+        'employees': 'Funcionários',
+        'server_usage': 'Servidor'
+    };
+    
+    const data = [];
+    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+    
+    let colorIndex = 0;
+    for (const [key, item] of Object.entries(breakdown)) {
+        if (item.weighted_cost > 0) {
+            data.push({
+                label: labels[key],
+                value: item.weighted_cost,
+                color: colors[colorIndex % colors.length]
+            });
+            colorIndex++;
+        }
+    }
+    
+    window.costChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: data.map(item => item.label),
+            datasets: [{
+                data: data.map(item => item.value),
+                backgroundColor: data.map(item => item.color),
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+}
+
+function simulateGrowth() {
+    const growthRate = parseFloat(document.getElementById('growth-scenario').value);
+    const period = parseInt(document.getElementById('growth-period').value);
+    const operationalCost = parseFloat(document.getElementById('operational-cost').value);
+    
+    let currentProjects = parseInt(document.getElementById('projects').value) || 5;
+    let totalRevenue = 0;
+    let totalCost = 0;
+    
+    let resultsHTML = '<h6>Projeção de Crescimento:</h6>';
+    resultsHTML += '<div class="table-responsive"><table class="table table-sm">';
+    resultsHTML += '<thead><tr><th>Mês</th><th>Projetos</th><th>Receita</th><th>Custo</th><th>Lucro</th></tr></thead><tbody>';
+    
+    for (let month = 1; month <= period; month++) {
+        const monthlyRevenue = currentProjects * 25; // R$ 25 por projeto
+        const monthlyCost = operationalCost;
+        const monthlyProfit = monthlyRevenue - monthlyCost;
+        
+        totalRevenue += monthlyRevenue;
+        totalCost += monthlyCost;
+        
+        resultsHTML += `<tr>
+            <td>${month}</td>
+            <td>${currentProjects}</td>
+            <td>R$ ${monthlyRevenue.toLocaleString('pt-BR')}</td>
+            <td>R$ ${monthlyCost.toLocaleString('pt-BR')}</td>
+            <td class="${monthlyProfit >= 0 ? 'text-success' : 'text-danger'}">R$ ${monthlyProfit.toLocaleString('pt-BR')}</td>
+        </tr>`;
+        
+        // Aplicar crescimento
+        currentProjects = Math.floor(currentProjects * (1 + growthRate));
+    }
+    
+    const totalProfit = totalRevenue - totalCost;
+    const roi = ((totalProfit / totalCost) * 100).toFixed(1);
+    
+    resultsHTML += '</tbody></table></div>';
+    resultsHTML += `<div class="alert alert-info mt-3">
+        <strong>Resumo:</strong><br>
+        Receita Total: R$ ${totalRevenue.toLocaleString('pt-BR')}<br>
+        Custo Total: R$ ${totalCost.toLocaleString('pt-BR')}<br>
+        Lucro Total: R$ ${totalProfit.toLocaleString('pt-BR')}<br>
+        ROI: ${roi}%
+    </div>`;
+    
+    document.getElementById('growth-results').innerHTML = resultsHTML;
+}
+
+function resetForm() {
+    document.getElementById('projects').value = 5;
+    document.getElementById('layers').value = 100;
+    document.getElementById('public_maps').value = 10;
+    document.getElementById('page_views').value = 50000;
+    document.getElementById('employees').value = 15;
+    document.getElementById('server_usage').value = 50;
+    
+    document.getElementById('pricing-result').style.display = 'none';
+}
+
+// Calcular automaticamente quando os valores mudarem
+document.querySelectorAll('#pricingForm input').forEach(input => {
+    input.addEventListener('input', debounce(calculatePrice, 1000));
+});
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Calcular preço inicial ao carregar a página
+document.addEventListener('DOMContentLoaded', calculatePrice);
+</script>
+{% endblock %}
+

@@ -1,0 +1,1136 @@
+
+{% extends 'layout.html' %}
+<!-- VERSION: 2.0 - Updated with cartography background, calculator section, testimonials -->
+{% block content %}
+
+
+
+<!-- Hero Section com Background de Cartografia -->
+<section class="hero-section position-relative overflow-hidden">
+    <!-- Background com imagem de cartografia -->
+    <div class="hero-background">
+        <div class="cartography-bg"></div>
+        <div class="overlay"></div>
+        <div class="geometric-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+        </div>
+        <div class="map-pattern"></div>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div class="container position-relative">
+        <div class="row min-vh-100 align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content text-white">
+                    <div class="hero-badge mb-3">
+                        <i class="fas fa-globe-americas me-2"></i>
+                        Plataforma WebGIS de Última Geração
+                    </div>
+                    <h1 class="hero-title display-4 fw-bold mb-4">
+                        Revolucione seus 
+                        <span class="text-gradient">Dados Geográficos</span>
+                    </h1>
+                    <p class="hero-description lead mb-5">
+                        Transforme informações espaciais em decisões estratégicas. Nossa plataforma oferece 
+                        ferramentas avançadas de geoprocessamento que impulsionam o sucesso de empresas 
+                        em todo o Brasil.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="/precos" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-calculator me-2"></i>
+                            Calcular Preços
+                        </a>
+                        <a href="#features" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-rocket me-2"></i>
+                            Conhecer Recursos
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-visual text-center">
+                    <div class="world-map-container">
+                        <div class="world-map">
+                            <i class="fas fa-globe fa-8x text-primary opacity-25"></i>
+                            <div class="floating-elements">
+                                <div class="floating-icon" style="--delay: 0s">
+                                    <i class="fas fa-map-marker-alt text-danger"></i>
+                                </div>
+                                <div class="floating-icon" style="--delay: 1s">
+                                    <i class="fas fa-location-arrow text-success"></i>
+                                </div>
+                                <div class="floating-icon" style="--delay: 2s">
+                                    <i class="fas fa-compass text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator">
+        <div class="scroll-arrow"></div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" class="features-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title display-5 fw-bold mb-3">
+                    Tecnologia de Ponta para suas Necessidades GIS
+                </h2>
+                <p class="section-subtitle lead text-muted">
+                    Nossa plataforma combina inovação e simplicidade para oferecer a melhor experiência em geoprocessamento
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h4>Visualização Avançada</h4>
+                    <p>Mapas interativos com múltiplas camadas e estilos personalizáveis para uma experiência visual rica e profissional.</p>
+                    <div class="feature-highlights">
+                        <span class="badge bg-primary">OpenStreetMap</span>
+                        <span class="badge bg-info">Imagens Satelite</span>
+                        <span class="badge bg-success">Terreno 3D</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Análise Espacial</h4>
+                    <p>Ferramentas poderosas para análise geográfica, medições precisas e criação de buffers e áreas de interesse estratégicas.</p>
+                    <div class="feature-highlights">
+                        <span class="badge bg-primary">Medições</span>
+                        <span class="badge bg-info">Buffers</span>
+                        <span class="badge bg-success">Áreas de Estudo</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h4>Gestão de Dados</h4>
+                    <p>Sistema robusto para gerenciar camadas, metadados e atributos com interface intuitiva e responsiva para máxima produtividade.</p>
+                    <div class="feature-highlights">
+                        <span class="badge bg-primary">Metadados</span>
+                        <span class="badge bg-info">Atributos</span>
+                        <span class="badge bg-success">Legendas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Calculator Highlight Section -->
+<section class="calculator-highlight-section py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-3">
+                    <i class="fas fa-calculator me-3"></i>
+                    Calculadora de Preços Inteligente
+                </h2>
+                <p class="lead mb-4">
+                    Descubra exatamente quanto custa implementar nossa solução para sua empresa. 
+                    Nossa calculadora considera todos os fatores para um orçamento preciso e transparente.
+                </p>
+                <div class="calculator-features">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="calc-feature">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Cálculo automático baseado em uso real
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="calc-feature">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Aplicação automática de descontos por volume
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="calc-feature">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Comparação entre planos disponíveis
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="calc-feature">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Orçamento personalizado para suas necessidades
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="calculator-cta">
+                    <i class="fas fa-calculator fa-6x mb-3 opacity-75"></i>
+                    <a href="/precos" class="btn btn-light btn-lg w-100">
+                        <i class="fas fa-rocket me-2"></i>
+                        Calcular Agora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Preview Section -->
+<section class="pricing-preview-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title display-5 fw-bold mb-3">
+                    Planos Escaláveis para Todos os Tamanhos
+                </h2>
+                <p class="section-subtitle lead text-muted">
+                    Escolha o plano ideal para sua empresa com preços transparentes e sem surpresas. 
+                    Todos os planos incluem suporte técnico e atualizações gratuitas.
+                </p>
+            </div>
+        </div>
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-3 col-md-6">
+                <div class="pricing-card starter">
+                    <div class="pricing-header">
+                        <h4>Starter</h4>
+                        <div class="price">A partir de <span class="amount">R$ 99</span>/mês</div>
+                        <small class="text-muted">Ideal para pequenas empresas</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check text-success"></i> Até 5 projetos</li>
+                        <li><i class="fas fa-check text-success"></i> 50 camadas</li>
+                        <li><i class="fas fa-check text-success"></i> 10.000 visualizações</li>
+                        <li><i class="fas fa-check text-success"></i> Suporte por email</li>
+                        <li><i class="fas fa-check text-success"></i> Atualizações gratuitas</li>
+                    </ul>
+                    <a href="/precos" class="btn btn-outline-primary w-100">Ver Detalhes</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="pricing-card professional featured">
+                    <div class="pricing-badge">Mais Popular</div>
+                    <div class="pricing-header">
+                        <h4>Professional</h4>
+                        <div class="price">A partir de <span class="amount">R$ 299</span>/mês</div>
+                        <small class="text-muted">Perfeito para empresas em crescimento</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check text-success"></i> Até 25 projetos</li>
+                        <li><i class="fas fa-check text-success"></i> 250 camadas</li>
+                        <li><i class="fas fa-check text-success"></i> 100.000 visualizações</li>
+                        <li><i class="fas fa-check text-success"></i> Suporte prioritário</li>
+                        <li><i class="fas fa-check text-success"></i> Treinamento incluído</li>
+                    </ul>
+                    <a href="/precos" class="btn btn-primary w-100">Ver Detalhes</a>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="pricing-card enterprise">
+                    <div class="pricing-header">
+                        <h4>Enterprise</h4>
+                        <div class="price">A partir de <span class="amount">R$ 799</span>/mês</div>
+                        <small class="text-muted">Para grandes corporações</small>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check text-success"></i> Até 150 projetos</li>
+                        <li><i class="fas fa-check text-success"></i> 1.000 camadas</li>
+                        <li><i class="fas fa-check text-success"></i> 500.000 visualizações</li>
+                        <li><i class="fas fa-check text-success"></i> Suporte 24/7</li>
+                        <li><i class="fas fa-check text-success"></i> Consultoria personalizada</li>
+                    </ul>
+                    <a href="/precos" class="btn btn-outline-primary w-100">Ver Detalhes</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="/precos" class="btn btn-lg btn-outline-primary">
+                <i class="fas fa-calculator me-2"></i>
+                Calcular Plano Personalizado
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="section-title display-5 fw-bold mb-3">
+                    O que nossos clientes dizem
+                </h2>
+                <p class="section-subtitle lead text-muted">
+                    Empresas de todo o Brasil já transformaram seus dados geográficos conosco
+                </p>
+        </div>
+    </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="testimonial-text">
+                            "A plataforma revolucionou nossa forma de trabalhar com dados geográficos. 
+                            A calculadora de preços nos ajudou a escolher o plano perfeito para nossa empresa."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h6 class="mb-0">Carlos Silva</h6>
+                                <small class="text-muted">Diretor de TI - GeoConsultoria Ltda</small>
+                            </div>
+                        </div>
+                    </div>
+          </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="testimonial-text">
+                            "Excelente suporte técnico e interface intuitiva. Conseguimos implementar 
+                            em tempo recorde e os resultados foram impressionantes desde o primeiro mês."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h6 class="mb-0">Ana Costa</h6>
+                                <small class="text-muted">Gerente de Projetos - Mapeamento Brasil</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+            <div class="col-lg-4 col-md-6">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="stars mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="testimonial-text">
+                            "A calculadora de preços é genial! Conseguimos dimensionar exatamente 
+                            o que precisamos e o ROI foi muito superior ao esperado."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="author-info">
+                                <h6 class="mb-0">Roberto Santos</h6>
+                                <small class="text-muted">CEO - Cartografia Digital</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5 text-white text-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h2 class="display-5 fw-bold mb-4">
+                    Pronto para Transformar seus Dados Geográficos?
+                </h2>
+                <p class="lead mb-5">
+                    Junte-se a centenas de empresas que já confiam em nossa plataforma para suas necessidades GIS. 
+                    Comece hoje mesmo e veja a diferença em sua produtividade.
+                </p>
+                <div class="cta-actions">
+                    <a href="/contato" class="btn btn-light btn-lg me-3">
+                        <i class="fas fa-envelope me-2"></i>
+                        Falar com Especialista
+                    </a>
+                    <a href="/precos" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-rocket me-2"></i>
+                        Começar Agora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Clientes Ativos</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-map"></i>
+                    </div>
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Mapas Criados</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Dados Processados</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime Garantido</div>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- CSS Personalizado -->
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.cartography-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    background-size: 100% 100%;
+    opacity: 0.6;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.geometric-shapes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 100px;
+    height: 100px;
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.shape-3 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+.shape-4 {
+    width: 120px;
+    height: 120px;
+    top: 30%;
+    right: 30%;
+    animation-delay: 1s;
+}
+
+.map-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
+        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 2px, transparent 2px);
+    background-size: 50px 50px;
+    opacity: 0.3;
+    z-index: 2;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.text-gradient {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-actions .btn {
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-actions .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.hero-actions .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.hero-actions .btn:hover::before {
+    left: 100%;
+}
+
+.hero-visual {
+    position: relative;
+    z-index: 3;
+}
+
+.world-map-container {
+    position: relative;
+    display: inline-block;
+}
+
+.world-map {
+    position: relative;
+    animation: pulse 3s ease-in-out infinite;
+}
+
+.floating-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.floating-icon {
+    position: absolute;
+    animation: float-icon 4s ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+.floating-icon:nth-child(1) { top: 20%; left: 20%; }
+.floating-icon:nth-child(2) { top: 60%; right: 20%; }
+.floating-icon:nth-child(3) { bottom: 20%; left: 50%; }
+
+@keyframes float-icon {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.scroll-arrow {
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
+    40% { transform: translateY(-10px) rotate(45deg); }
+    60% { transform: translateY(-5px) rotate(45deg); }
+}
+
+/* Calculator Highlight Section */
+.calculator-highlight-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.calculator-features {
+    margin-top: 2rem;
+}
+
+.calc-feature {
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.calculator-cta {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.calculator-cta::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Features Section */
+.features-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.features-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="rgba(34,197,94,0.1)"/><circle cx="80" cy="40" r="1" fill="rgba(34,197,94,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(34,197,94,0.1)"/><circle cx="60" cy="60" r="1" fill="rgba(34,197,94,0.1)"/><circle cx="10" cy="70" r="1" fill="rgba(34,197,94,0.1)"/><circle cx="90" cy="10" r="1" fill="rgba(34,197,94,0.1)"/></svg>'),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M10,50 Q25,25 50,50 T90,50" stroke="rgba(59,130,246,0.05)" fill="none" stroke-width="1"/><path d="M10,30 Q25,5 50,30 T90,30" stroke="rgba(59,130,246,0.05)" fill="none" stroke-width="1"/><path d="M10,70 Q25,45 50,70 T90,70" stroke="rgba(59,130,246,0.05)" fill="none" stroke-width="1"/></svg>');
+    background-size: 200px 200px, 300px 300px;
+    opacity: 0.3;
+}
+
+.section-title {
+    color: #f8fafc;
+}
+
+.section-subtitle {
+    color: #cbd5e1;
+}
+
+.feature-card {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+    transition: all 0.4s ease;
+    height: 100%;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover::before {
+    transform: scaleX(1);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 2rem;
+}
+
+.feature-card h4 {
+    color: #f8fafc;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.feature-card p {
+    color: #cbd5e1;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.feature-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* Pricing Preview Section */
+.pricing-preview-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-preview-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><polygon points="10,10 20,20 15,30 5,25" fill="rgba(34,197,94,0.1)"/><polygon points="70,20 80,30 75,40 65,30" fill="rgba(34,197,94,0.1)"/><polygon points="40,60 50,70 45,80 35,70" fill="rgba(34,197,94,0.1)"/><polygon points="80,70 90,80 85,90 75,80" fill="rgba(34,197,94,0.1)"/></svg>'),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><line x1="10" y1="50" x2="90" y2="50" stroke="rgba(59,130,246,0.05)" stroke-width="1"/><line x1="50" y1="10" x2="50" y2="90" stroke="rgba(59,130,246,0.05)" stroke-width="1"/></svg>');
+    background-size: 250px 250px, 300px 300px;
+    opacity: 0.3;
+}
+
+.pricing-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    position: relative;
+    height: 100%;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.02), rgba(118, 75, 162, 0.02));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.pricing-card:hover::after {
+    opacity: 1;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.pricing-card.featured {
+    border-color: #667eea;
+    transform: scale(1.05);
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.pricing-header h4 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.price {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+.amount {
+    color: #667eea;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.pricing-features li {
+    padding: 0.5rem 0;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+    background: #fff;
+    position: relative;
+}
+
+.testimonial-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.08);
+    transition: all 0.4s ease;
+    height: 100%;
+    border: 1px solid #f8f9fa;
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    font-size: 4rem;
+    color: rgba(102, 126, 234, 0.1);
+    font-family: serif;
+    line-height: 1;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.testimonial-text {
+    color: #2c3e50;
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.author-info h6 {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 25% 25%, rgba(255,255,255,0.05) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 0%, transparent 50%);
+    background-size: 100% 100%;
+}
+
+.cta-actions .btn {
+    padding: 0.75rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.cta-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Stats Section */
+.stats-section {
+    background: #fff;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 3rem 1rem;
+    position: relative;
+}
+
+.stat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.stat-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 2rem;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .pricing-card.featured {
+        transform: none;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .calculator-highlight-section .row {
+        text-align: center;
+    }
+}
+
+/* Animações de entrada */
+.feature-card, .pricing-card, .stat-item, .testimonial-card {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.2s; }
+.feature-card:nth-child(3) { animation-delay: 0.3s; }
+
+.pricing-card:nth-child(1) { animation-delay: 0.1s; }
+.pricing-card:nth-child(2) { animation-delay: 0.2s; }
+.pricing-card:nth-child(3) { animation-delay: 0.3s; }
+
+.stat-item:nth-child(1) { animation-delay: 0.1s; }
+.stat-item:nth-child(2) { animation-delay: 0.2s; }
+.stat-item:nth-child(3) { animation-delay: 0.3s; }
+.stat-item:nth-child(4) { animation-delay: 0.4s; }
+
+.testimonial-card:nth-child(1) { animation-delay: 0.1s; }
+.testimonial-card:nth-child(2) { animation-delay: 0.2s; }
+.testimonial-card:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+{% endblock %}

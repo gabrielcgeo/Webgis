@@ -1,0 +1,400 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<style>
+.contact-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
+
+.plan-summary {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.plan-badge {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.plan-badge.starter { background-color: #28a745; color: white; }
+.plan-badge.professional { background-color: #007bff; color: white; }
+.plan-badge.enterprise { background-color: #343a40; color: white; }
+.plan-badge.personalizado { background-color: #ffc107; color: #212529; }
+
+.form-section {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.required-field::after {
+    content: " *";
+    color: red;
+}
+</style>
+
+<div class="container-fluid">
+    <!-- Header da Página -->
+    <div class="text-center py-5 mb-5">
+        <h1 class="display-4 text-primary mb-3">
+            <i class="fas fa-envelope me-3"></i>Entre em Contato
+        </h1>
+        <p class="lead text-muted">Preencha suas informações para receber uma proposta personalizada</p>
+    </div>
+
+    <!-- Resumo do Plano Escolhido -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mx-auto">
+            <div class="plan-summary text-center">
+                <h4 class="mb-3">Plano Selecionado</h4>
+                <div id="plan-display">
+                    <div class="plan-badge starter" id="plan-badge">Carregando...</div>
+                    <div id="plan-details">
+                        <p class="text-muted">Detalhes do plano serão exibidos aqui</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulário de Contato -->
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="form-section">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-user-plus me-2"></i>Suas Informações
+                </h3>
+                
+                <form id="contactForm">
+                    <div class="row">
+                        <!-- Coluna 1 -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nome" class="form-label required-field">
+                                    <i class="fas fa-user text-primary me-2"></i>Nome Completo
+                                </label>
+                                <input type="text" class="form-control" id="nome" name="nome" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label required-field">
+                                    <i class="fas fa-envelope text-primary me-2"></i>E-mail
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="telefone" class="form-label">
+                                    <i class="fas fa-phone text-primary me-2"></i>Telefone
+                                </label>
+                                <input type="tel" class="form-control" id="telefone" name="telefone">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="empresa" class="form-label">
+                                    <i class="fas fa-building text-primary me-2"></i>Empresa
+                                </label>
+                                <input type="text" class="form-control" id="empresa" name="empresa">
+                            </div>
+                        </div>
+
+                        <!-- Coluna 2 -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cargo" class="form-label">
+                                    <i class="fas fa-briefcase text-primary me-2"></i>Cargo
+                                </label>
+                                <input type="text" class="form-control" id="cargo" name="cargo">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="setor" class="form-label">
+                                    <i class="fas fa-industry text-primary me-2"></i>Setor de Atuação
+                                </label>
+                                <select class="form-select" id="setor" name="setor">
+                                    <option value="">Selecione um setor</option>
+                                    <option value="Agricultura">Agricultura</option>
+                                    <option value="Mineração">Mineração</option>
+                                    <option value="Construção">Construção</option>
+                                    <option value="Transporte">Transporte</option>
+                                    <option value="Energia">Energia</option>
+                                    <option value="Meio Ambiente">Meio Ambiente</option>
+                                    <option value="Governo">Governo</option>
+                                    <option value="Educação">Educação</option>
+                                    <option value="Saúde">Saúde</option>
+                                    <option value="Comércio">Comércio</option>
+                                    <option value="Serviços">Serviços</option>
+                                    <option value="Outro">Outro</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="funcionarios" class="form-label">
+                                    <i class="fas fa-users text-primary me-2"></i>Número de Funcionários
+                                </label>
+                                <select class="form-select" id="funcionarios" name="funcionarios">
+                                    <option value="">Selecione</option>
+                                    <option value="1-10">1-10</option>
+                                    <option value="11-50">11-50</option>
+                                    <option value="51-200">51-200</option>
+                                    <option value="201-1000">201-1000</option>
+                                    <option value="1000+">1000+</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="urgencia" class="form-label">
+                                    <i class="fas fa-clock text-primary me-2"></i>Urgência da Implementação
+                                </label>
+                                <select class="form-select" id="urgencia" name="urgencia">
+                                    <option value="">Selecione</option>
+                                    <option value="Imediata">Imediata (1-2 meses)</option>
+                                    <option value="Curto prazo">Curto prazo (3-6 meses)</option>
+                                    <option value="Médio prazo">Médio prazo (6-12 meses)</option>
+                                    <option value="Longo prazo">Longo prazo (1+ ano)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mensagem" class="form-label">
+                            <i class="fas fa-comment text-primary me-2"></i>Mensagem Adicional
+                        </label>
+                        <textarea class="form-control" id="mensagem" name="mensagem" rows="4" 
+                                  placeholder="Descreva suas necessidades específicas, prazos ou outras informações relevantes..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="newsletter" name="newsletter">
+                            <label class="form-check-label" for="newsletter">
+                                Desejo receber novidades e atualizações sobre o WebGIS
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Enviar Mensagem
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-lg ms-2" onclick="voltarPrecos()">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar aos Preços
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Loading -->
+                <div id="contact-loading" class="text-center mt-4" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Enviando...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Enviando sua mensagem...</p>
+                </div>
+
+                <!-- Resultado -->
+                <div id="contact-result" class="mt-4" style="display: none;">
+                    <div class="alert alert-success text-center">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <h5>Mensagem Enviada com Sucesso!</h5>
+                        <p class="mb-0">Entraremos em contato em breve com sua proposta personalizada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript para a Página de Contato -->
+<script>
+// Verificar se as funções de formatação estão disponíveis
+function verificarFuncoesFormatacao() {
+    if (typeof formatarMoeda === 'undefined') {
+        console.error('Função formatarMoeda não encontrada');
+        return false;
+    }
+    if (typeof formatarNumero === 'undefined') {
+        console.error('Função formatarNumero não encontrada');
+        return false;
+    }
+    return true;
+}
+
+// Função para exibir o plano escolhido
+function exibirPlanoEscolhido() {
+    const planoSalvo = localStorage.getItem('plano_escolhido_webgis');
+    
+    if (!planoSalvo) {
+        // Se não há plano escolhido, redirecionar para preços
+        window.location.href = '/precos';
+        return;
+    }
+    
+    try {
+        const plano = JSON.parse(planoSalvo);
+        const planBadge = document.getElementById('plan-badge');
+        const planDetails = document.getElementById('plan-details');
+        
+        // Configurar o badge do plano
+        planBadge.textContent = plano.nome;
+        planBadge.className = `plan-badge ${plano.nome.toLowerCase()}`;
+        
+        // Exibir detalhes do plano
+        let detalhesHTML = '';
+        
+        if (plano.nome === 'Personalizado' && plano.valores) {
+            detalhesHTML = `
+                <div class="row text-center">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Configuração Personalizada</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Projetos:</strong> ${formatarNumero(plano.valores.projects)}</li>
+                            <li><strong>Camadas:</strong> ${formatarNumero(plano.valores.layers)}</li>
+                            <li><strong>Mapas Públicos:</strong> ${formatarNumero(plano.valores.public_maps)}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Recursos</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Visualizações:</strong> ${formatarNumero(plano.valores.page_views)}/mês</li>
+                            <li><strong>Funcionários:</strong> ${formatarNumero(plano.valores.employees)}</li>
+                            <li><strong>Armazenamento:</strong> ${formatarNumero(plano.valores.server_usage)} GB</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            if (plano.preco) {
+                detalhesHTML += `
+                    <div class="mt-3">
+                        <h5 class="text-primary">Preço Estimado: ${plano.preco}/mês</h5>
+                    </div>
+                `;
+            }
+        } else {
+            // Para planos fixos, mostrar características padrão
+            const caracteristicas = {
+                'Starter': 'Ideal para pequenas empresas com necessidades básicas de GIS',
+                'Professional': 'Solução completa para empresas em crescimento',
+                'Enterprise': 'Plataforma robusta para grandes corporações'
+            };
+            
+            detalhesHTML = `
+                <p class="text-muted">${caracteristicas[plano.nome] || 'Plano personalizado para suas necessidades específicas'}</p>
+                <p class="text-muted">Data de seleção: ${new Date(plano.data).toLocaleDateString('pt-BR')}</p>
+            `;
+        }
+        
+        planDetails.innerHTML = detalhesHTML;
+        
+    } catch (error) {
+        console.error('Erro ao exibir plano:', error);
+        window.location.href = '/precos';
+    }
+}
+
+// Função para enviar o formulário
+async function enviarFormulario(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const loadingDiv = document.getElementById('contact-loading');
+    const resultDiv = document.getElementById('contact-result');
+    
+    // Mostrar loading
+    loadingDiv.style.display = 'block';
+    resultDiv.style.display = 'none';
+    
+    // Coletar dados do formulário
+    const formData = new FormData(form);
+    const dados = Object.fromEntries(formData.entries());
+    
+    // Adicionar dados do plano escolhido
+    const planoSalvo = localStorage.getItem('plano_escolhido_webgis');
+    if (planoSalvo) {
+        dados.plano = JSON.parse(planoSalvo);
+    }
+    
+    // Adicionar timestamp
+    dados.timestamp = new Date().toISOString();
+    dados.data_envio = new Date().toLocaleDateString('pt-BR');
+    dados.hora_envio = new Date().toLocaleTimeString('pt-BR');
+    
+    try {
+        const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dados)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Sucesso
+            resultDiv.style.display = 'block';
+            form.reset();
+            
+            // Limpar plano escolhido do localStorage
+            localStorage.removeItem('plano_escolhido_webgis');
+            
+            // Redirecionar após 3 segundos
+            setTimeout(() => {
+                window.location.href = '/precos';
+            }, 3000);
+        } else {
+            throw new Error(result.error || 'Erro ao enviar mensagem');
+        }
+        
+    } catch (error) {
+        console.error('Erro ao enviar formulário:', error);
+        alert(`Erro ao enviar mensagem: ${error.message}`);
+    } finally {
+        loadingDiv.style.display = 'none';
+    }
+}
+
+// Função para voltar à página de preços
+function voltarPrecos() {
+    // Limpar plano escolhido do localStorage
+    localStorage.removeItem('plano_escolhido_webgis');
+    window.location.href = '/precos';
+}
+
+// Inicializar página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Página de contato carregada!');
+    
+    // Verificar funções de formatação
+    if (!verificarFuncoesFormatacao()) {
+        console.warn('Funções de formatação não disponíveis');
+    }
+    
+    // Exibir plano escolhido
+    exibirPlanoEscolhido();
+    
+    // Adicionar event listener ao formulário
+    const form = document.getElementById('contactForm');
+    if (form) {
+        form.addEventListener('submit', enviarFormulario);
+    }
+});
+</script>
+{% endblock %}

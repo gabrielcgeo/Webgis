@@ -1,0 +1,90 @@
+
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2>Upload de Nova Camada</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('upload_file_action') }}" method="post" enctype="multipart/form-data">
+                    
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Arquivo (.zip, .geojson, .kml, .tif)</label>
+                        <input type="file" class="form-control" id="file" name="file" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="project_id" class="form-label">Projeto</label>
+                        <select class="form-select" id="project_id" name="project_id" required>
+                            <option value="" disabled selected>Selecione um projeto</option>
+                            {% for project in projects %}
+                            <option value="{{ project.id }}">{{ project.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <hr>
+                    <h5>Informações da Camada (Opcional)</h5>
+
+                    <div class="mb-3">
+                        <label for="layer_name" class="form-label">Nome da Camada</label>
+                        <input type="text" class="form-control" id="layer_name" name="layer_name" placeholder="Deixe em branco para usar o nome do arquivo">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="thematic_group" class="form-label">Grupo Temático</label>
+                        <input class="form-control" list="thematic-groups-list" id="thematic_group" name="thematic_group" placeholder="Digite para buscar ou criar um novo...">
+                        <datalist id="thematic-groups-list">
+                            </datalist>
+                    </div>
+
+                    <hr>
+                    <h5>Metadados (Opcional)</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="metadata_producer" class="form-label">Entidade Produtora</label>
+                            <input type="text" class="form-control" id="metadata_producer" name="metadata_producer">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="metadata_date" class="form-label">Data de Produção</label>
+                            <input type="date" class="form-control" id="metadata_date" name="metadata_date">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="metadata_responsible" class="form-label">Responsáveis</label>
+                            <input type="text" class="form-control" id="metadata_responsible" name="metadata_responsible">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="metadata_crs" class="form-label">Sistema de Coordenadas (Ex: SIRGAS 2000)</label>
+                            <input type="text" class="form-control" id="metadata_crs" name="metadata_crs">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    fetch("{{ url_for('get_thematic_groups') }}")
+        .then(response => response.json())
+        .then(data => {
+            const datalist = document.getElementById('thematic-groups-list');
+            data.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group;
+                datalist.appendChild(option);
+            });
+        });
+});
+</script>
+{% endblock %}

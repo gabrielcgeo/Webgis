@@ -1,0 +1,41 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>{% if company.id %}Editar Empresa{% else %}Nova Empresa{% endif %}</h2>
+<div class="card">
+  <div class="card-body">
+    <form method="post">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Nome</label>
+          <input class="form-control" name="name" value="{{ company.name or '' }}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Slug (URL)</label>
+          <input class="form-control" name="slug" value="{{ company.slug or '' }}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Cor Primária</label>
+          <input class="form-control" type="color" name="primary_color" value="{{ company.primary_color or '#00d28f' }}">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Limite de Camadas</label>
+          <input class="form-control" type="number" name="layer_limit" value="{{ company.layer_limit or 10 }}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Limite de Armazenamento (MB)</label>
+          <input class="form-control" type="number" name="storage_limit_mb" value="{{ company.storage_limit_mb or 200 }}" required>
+        </div>
+        <div class="col-md-3 mb-3">
+          <label class="form-label">Expira em</label>
+          <input class="form-control" type="datetime-local" name="expiry_date" value="{{ company.expiry_date.strftime('%Y-%m-%dT%H:%M') if company.expiry_date else '' }}">
+        </div>
+      </div>
+      <button class="btn btn-primary">Salvar</button>
+      <a class="btn btn-secondary" href="{{ url_for('manage_companies') }}">Cancelar</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

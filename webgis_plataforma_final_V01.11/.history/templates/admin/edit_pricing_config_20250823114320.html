@@ -1,0 +1,977 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fas fa-{{ 'plus' if config.id is none else 'edit' }} text-primary me-2"></i>
+        {{ 'Nova' if config.id is none else 'Editar' }} Configuração de Preços
+    </h2>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Informações Básicas</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nome da Configuração *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ config.name or '' }}" required>
+                                <small class="form-text text-muted">Ex: Projeto, Camada, Visualização</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Categoria *</label>
+                                <select class="form-control" id="category" name="category" required>
+                                    <option value="base" {{ 'selected' if config.category == 'base' else '' }}>Base - Preço por unidade</option>
+                                    <option value="tier" {{ 'selected' if config.category == 'tier' else '' }}>Tier - Preço por camadas</option>
+                                    <option value="multiplier" {{ 'selected' if config.category == 'multiplier' else '' }}>Multiplicador - Preço variável</option>
+                                </select>
+                                <small class="form-text text-muted">Define como o preço é calculado</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="base_price" class="form-label">
+                                    <i class="fas fa-dollar-sign text-success me-1"></i>Preço Base (R$) *
+                                </label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="base_price" name="base_price" 
+                                           step="0.0001" min="0" value="{{ config.base_price or 0 }}" required>
+                                    <span class="input-group-text bg-success text-white" id="sync-status">
+                                        <i class="fas fa-link"></i>
+                                    </span>
+                                </div>
+                                <small class="form-text text-muted">
+                                    <span id="base_price_help">Preço unitário base - alterações sincronizam automaticamente com os tiers</span>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="weight_factor" class="form-label">Fator de Peso</label>
+                                <input type="number" class="form-control" id="weight_factor" name="weight_factor" 
+                                       step="0.1" min="0.1" value="{{ config.weight_factor or 1.0 }}">
+                                <small class="form-text text-muted">Multiplica o preço final (1.0 = sem alteração)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                                         <h6 class="mb-3">
+                         <i class="fas fa-layer-group me-2"></i>
+                         Configuração de Tiers (6 Tiers + Tier 7+)
+                     </h6>
+                     <div class="alert alert-info">
+                         <i class="fas fa-info-circle me-2"></i>
+                         <strong>Tiers permitem preços degrevivos por volume.</strong><br>
+                         Os preços dos tiers são calculados automaticamente baseado no preço base.
+                     </div>
+                     
+                                          <!-- Configuração de Percentuais de Desconto -->
+                      <div class="row mb-3">
+                          <div class="col-md-12">
+                              <div class="card border-warning">
+                                  <div class="card-header bg-warning text-dark">
+                                      <h6 class="mb-0">
+                                          <i class="fas fa-percentage me-2"></i>Percentuais de Desconto por Tier
+                                      </h6>
+                                  </div>
+                                  <div class="card-body">
+                                      <div class="row">
+                                          <div class="col-md-2">
+                                              <label class="form-label">Tier 1 (%)</label>
+                                              <input type="number" class="form-control" id="tier1_discount" 
+                                                     min="0" max="100" value="15" step="5">
+                                              <small class="form-text text-muted">15% desconto</small>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <label class="form-label">Tier 2 (%)</label>
+                                              <input type="number" class="form-control" id="tier2_discount" 
+                                                     min="0" max="100" value="25" step="5">
+                                              <small class="form-text text-muted">25% desconto</small>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <label class="form-label">Tier 3 (%)</label>
+                                              <input type="number" class="form-control" id="tier3_discount" 
+                                                     min="0" max="100" value="35" step="5">
+                                              <small class="form-text text-muted">35% desconto</small>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <label class="form-label">Tier 4 (%)</label>
+                                              <input type="number" class="form-control" id="tier4_discount" 
+                                                     min="0" max="100" value="45" step="5">
+                                              <small class="form-text text-muted">45% desconto</small>
+                                          </div>
+                                          <div class="col-md-2">
+                                              <label class="form-label">Tier 5 (%)</label>
+                                              <input type="number" class="form-control" id="tier5_discount" 
+                                                     min="0" max="100" value="55" step="5">
+                                              <small class="form-text text-muted">55% desconto</small>
+                                          </div>
+                                         <div class="col-md-2">
+                                             <label class="form-label">&nbsp;</label>
+                                             <div class="d-grid gap-2">
+                                                 <button type="button" class="btn btn-warning btn-sm" onclick="applyDiscounts()">
+                                                     <i class="fas fa-sync-alt me-2"></i>Aplicar
+                                                 </button>
+                                                 <button type="button" class="btn btn-outline-secondary btn-sm" onclick="resetToAuto()">
+                                                     <i class="fas fa-undo me-2"></i>Reset
+                                                 </button>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+                                         <div class="row">
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_1_limit" class="form-label">Limite Tier 1</label>
+                                 <input type="number" class="form-control" id="tier_1_limit" name="tier_1_limit" 
+                                        min="1" value="{{ config.tier_1_limit or '50' }}">
+                                 <small class="form-text text-muted">Ex: 50 (até 50 unidades usam preço base)</small>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_1_price" class="form-label">
+                                     <i class="fas fa-calculator text-warning me-1"></i>Preço Tier 1 (R$)
+                                 </label>
+                                 <div class="input-group">
+                                     <input type="number" class="form-control" id="tier_1_price" name="tier_1_price" 
+                                            step="0.0001" min="0" value="{{ config.tier_1_price or '' }}" readonly>
+                                     <button class="btn btn-outline-secondary" type="button" onclick="calculateTierPrice(1)" title="Recalcular automaticamente">
+                                         <i class="fas fa-sync-alt"></i>
+                                     </button>
+                                                                           <button class="btn btn-outline-warning" type="button" onclick="toggleTierEdit(1)" title="Editar manualmente">
+                                          <i class="fas fa-edit"></i> Editar
+                                      </button>
+                                 </div>
+                                 <small class="form-text text-muted">
+                                     <span id="tier1_calculation">Calculado automaticamente</span>
+                                 </small>
+                             </div>
+                         </div>
+                     </div>
+
+                                         <div class="row">
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_2_limit" class="form-label">Limite Tier 2</label>
+                                 <input type="number" class="form-control" id="tier_2_limit" name="tier_2_limit" 
+                                        min="1" value="{{ config.tier_2_limit or '200' }}">
+                                 <small class="form-text text-muted">Ex: 200 (de 51 a 200 usam preço Tier 1)</small>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_2_price" class="form-label">
+                                     <i class="fas fa-calculator text-warning me-1"></i>Preço Tier 2 (R$)
+                                 </label>
+                                 <div class="input-group">
+                                     <input type="number" class="form-control" id="tier_2_price" name="tier_2_price" 
+                                            step="0.0001" min="0" value="{{ config.tier_2_price or '' }}" readonly>
+                                     <button class="btn btn-outline-secondary" type="button" onclick="calculateTierPrice(2)" title="Recalcular automaticamente">
+                                         <i class="fas fa-sync-alt"></i>
+                                     </button>
+                                     <button class="btn btn-outline-warning" type="button" onclick="toggleTierEdit(2)" title="Editar manualmente">
+                                         <i class="fas fa-edit"></i>
+                                     </button>
+                                 </div>
+                                 <small class="form-text text-muted">
+                                     <span id="tier2_calculation">Calculado automaticamente</span>
+                                 </small>
+                             </div>
+                         </div>
+                     </div>
+
+                                         <div class="row">
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_3_limit" class="form-label">Limite Tier 3</label>
+                                 <input type="number" class="form-control" id="tier_3_limit" name="tier_3_limit" 
+                                        min="1" value="{{ config.tier_3_limit or '500' }}">
+                                 <small class="form-text text-muted">Ex: 500 (de 201 a 500 usam preço Tier 2)</small>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_3_price" class="form-label">
+                                     <i class="fas fa-calculator text-warning me-1"></i>Preço Tier 3 (R$)
+                                 </label>
+                                 <div class="input-group">
+                                     <input type="number" class="form-control" id="tier_3_price" name="tier_3_price" 
+                                            step="0.0001" min="0" value="{{ config.tier_3_price or '' }}" readonly>
+                                     <button class="btn btn-outline-secondary" type="button" onclick="calculateTierPrice(3)" title="Recalcular automaticamente">
+                                         <i class="fas fa-sync-alt"></i>
+                                     </button>
+                                     <button class="btn btn-outline-warning" type="button" onclick="toggleTierEdit(3)" title="Editar manualmente">
+                                         <i class="fas fa-edit"></i>
+                                     </button>
+                                 </div>
+                                 <small class="form-text text-muted">
+                                     <span id="tier3_calculation">Calculado automaticamente</span>
+                                 </small>
+                             </div>
+                         </div>
+                                          </div>
+
+                     <!-- Tier 4 -->
+                     <div class="row">
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_4_limit" class="form-label">Limite Tier 4</label>
+                                 <input type="number" class="form-control" id="tier_4_limit" name="tier_4_limit" 
+                                        min="1" value="{{ config.tier_4_limit or '1000' }}">
+                                 <small class="form-text text-muted">Ex: 1000 (de 501 a 1000 usam preço Tier 4)</small>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_4_price" class="form-label">
+                                     <i class="fas fa-calculator text-warning me-1"></i>Preço Tier 4 (R$)
+                                 </label>
+                                 <div class="input-group">
+                                     <input type="number" class="form-control" id="tier_4_price" name="tier_4_price" 
+                                            step="0.0001" min="0" value="{{ config.tier_4_price or '' }}" readonly>
+                                     <button class="btn btn-outline-secondary" type="button" onclick="calculateTierPrice(4)" title="Recalcular automaticamente">
+                                         <i class="fas fa-sync-alt"></i>
+                                     </button>
+                                     <button class="btn btn-outline-warning" type="button" onclick="toggleTierEdit(4)" title="Editar manualmente">
+                                         <i class="fas fa-edit"></i>
+                                     </button>
+                                 </div>
+                                 <small class="form-text text-muted">
+                                     <span id="tier4_calculation">Calculado automaticamente</span>
+                                 </small>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- Tier 5 -->
+                     <div class="row">
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_5_limit" class="form-label">Limite Tier 5</label>
+                                 <input type="number" class="form-control" id="tier_5_limit" name="tier_5_limit" 
+                                        min="1" value="{{ config.tier_5_limit or '2500' }}">
+                                 <small class="form-text text-muted">Ex: 2500 (de 1001 a 2500 usam preço Tier 5)</small>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_5_price" class="form-label">
+                                     <i class="fas fa-calculator text-warning me-1"></i>Preço Tier 5 (R$)
+                                 </label>
+                                 <div class="input-group">
+                                     <input type="number" class="form-control" id="tier_5_price" name="tier_5_price" 
+                                            step="0.0001" min="0" value="{{ config.tier_5_price or '' }}" readonly>
+                                     <button class="btn btn-outline-secondary" type="button" onclick="calculateTierPrice(5)" title="Recalcular automaticamente">
+                                         <i class="fas fa-sync-alt"></i>
+                                     </button>
+                                     <button class="btn btn-outline-warning" type="button" onclick="toggleTierEdit(5)" title="Editar manualmente">
+                                         <i class="fas fa-edit"></i>
+                                     </button>
+                                 </div>
+                                 <small class="form-text text-muted">
+                                     <span id="tier5_calculation">Calculado automaticamente</span>
+                                 </small>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- Tier 6 -->
+                     <div class="row">
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_6_limit" class="form-label">Limite Tier 6</label>
+                                 <input type="number" class="form-control" id="tier_6_limit" name="tier_6_limit" 
+                                        min="1" value="{{ config.tier_6_limit or '5000' }}">
+                                 <small class="form-text text-muted">Ex: 5000 (de 2501 a 5000 usam preço Tier 6)</small>
+                             </div>
+                         </div>
+                         <div class="col-md-6">
+                             <div class="mb-3">
+                                 <label for="tier_6_price" class="form-label">
+                                     <i class="fas fa-calculator text-warning me-1"></i>Preço Tier 6 (R$)
+                                 </label>
+                                 <div class="input-group">
+                                     <input type="number" class="form-control" id="tier_6_price" name="tier_6_price" 
+                                            step="0.0001" min="0" value="{{ config.tier_6_price or '' }}" readonly>
+                                     <button class="btn btn-outline-secondary" type="button" onclick="calculateTierPrice(6)" title="Recalcular automaticamente">
+                                         <i class="fas fa-sync-alt"></i>
+                                     </button>
+                                     <button class="btn btn-outline-warning" type="button" onclick="toggleTierEdit(6)" title="Editar manualmente">
+                                         <i class="fas fa-edit"></i>
+                                     </button>
+                                 </div>
+                                 <small class="form-text text-muted">
+                                     <span id="tier6_calculation">Calculado automaticamente</span>
+                                 </small>
+                             </div>
+                         </div>
+                     </div>
+
+                     <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                               {{ 'checked' if config.is_active else 'checked' if config.id is none else '' }}>
+                        <label class="form-check-label" for="is_active">
+                            <strong>Configuração Ativa</strong>
+                        </label>
+                        <small class="form-text text-muted d-block">Apenas configurações ativas são usadas na calculadora</small>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>
+                            {{ 'Criar' if config.id is none else 'Atualizar' }} Configuração
+                        </button>
+                        <a href="{{ url_for('manage_pricing') }}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb text-warning me-2"></i>
+                    Dicas de Configuração
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6>📊 Categorias:</h6>
+                    <ul class="small">
+                        <li><strong>Base:</strong> Preço fixo por unidade</li>
+                        <li><strong>Tier:</strong> Preços degrevivos por volume</li>
+                        <li><strong>Multiplicador:</strong> Preço variável</li>
+                    </ul>
+                </div>
+
+                <div class="mb-3">
+                    <h6>🎯 Exemplos de Configuração:</h6>
+                    <div class="small">
+                        <strong>Projetos:</strong><br>
+                        Base: R$ 25,00<br>
+                        Tier 1: até 10<br>
+                        Tier 2: R$ 20,00 (11-50)<br>
+                        Peso: 1.0
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="small">
+                        <strong>Visualizações:</strong><br>
+                        Base: R$ 0,002<br>
+                        Tier 1: até 10.000<br>
+                        Tier 2: R$ 0,001 (10K-100K)<br>
+                        Peso: 0.8
+                    </div>
+                </div>
+
+                <div class="alert alert-warning small">
+                    <i class="fas fa-exclamation-triangle me-1"></i>
+                    <strong>Importante:</strong> Mudanças afetam imediatamente a calculadora pública.
+                </div>
+            </div>
+        </div>
+
+                 <div class="card mt-3">
+             <div class="card-header">
+                 <h5 class="mb-0">
+                     <i class="fas fa-calculator text-success me-2"></i>
+                     Simulador de Tiers
+                 </h5>
+             </div>
+             <div class="card-body">
+                 <div class="mb-3">
+                     <label for="test_quantity" class="form-label">Quantidade para Teste:</label>
+                     <input type="number" class="form-control" id="test_quantity" min="1" value="150">
+                 </div>
+                 <button type="button" class="btn btn-success btn-sm" onclick="simulatePrice()">
+                     <i class="fas fa-play me-1"></i>Simular Preço
+                 </button>
+                 <div id="simulation_result" class="mt-2"></div>
+                 
+                 <!-- Visualização dos Tiers -->
+                 <div class="mt-3">
+                     <h6 class="text-muted">Estrutura dos Tiers:</h6>
+                     <div id="tiers_visualization" class="small">
+                         <div class="text-muted">Configure os limites e preços para visualizar a estrutura</div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+    </div>
+</div>
+
+<script>
+// Função para formatação brasileira de moeda
+function formatarMoeda(valor) {
+    // Apenas trocar ponto por vírgula para decimais
+    return valor.toFixed(4).replace('.', ',');
+}
+
+// Função para formatação brasileira de números
+function formatarNumero(valor) {
+    // Aplicar formatação de milhares apenas para números inteiros
+    return valor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// Funções para persistência de dados no localStorage
+function salvarConfiguracao() {
+    const config = {
+        base_price: document.getElementById('base_price').value,
+        weight_factor: document.getElementById('weight_factor').value,
+        tier1_discount: document.getElementById('tier1_discount').value,
+        tier2_discount: document.getElementById('tier2_discount').value,
+        tier3_discount: document.getElementById('tier3_discount').value,
+        tier4_discount: document.getElementById('tier4_discount').value,
+        tier5_discount: document.getElementById('tier5_discount').value,
+        tier_1_limit: document.getElementById('tier_1_limit').value,
+        tier_2_limit: document.getElementById('tier_2_limit').value,
+        tier_3_limit: document.getElementById('tier_3_limit').value,
+        tier_4_limit: document.getElementById('tier_4_limit').value,
+        tier_5_limit: document.getElementById('tier_5_limit').value,
+        tier_6_limit: document.getElementById('tier_6_limit').value,
+        tier_1_price: document.getElementById('tier_1_price').value,
+        tier_2_price: document.getElementById('tier_2_price').value,
+        tier_3_price: document.getElementById('tier_3_price').value,
+        tier_4_price: document.getElementById('tier_4_price').value,
+        tier_5_price: document.getElementById('tier_5_price').value,
+        tier_6_price: document.getElementById('tier_6_price').value,
+        modo_manual: {
+            tier_1: !document.getElementById('tier_1_price').readOnly,
+            tier_2: !document.getElementById('tier_2_price').readOnly,
+            tier_3: !document.getElementById('tier_3_price').readOnly,
+            tier_4: !document.getElementById('tier_4_price').readOnly,
+            tier_5: !document.getElementById('tier_5_price').readOnly,
+            tier_6: !document.getElementById('tier_6_price').readOnly
+        }
+    };
+    
+    localStorage.setItem('pricing_config', JSON.stringify(config));
+}
+
+function carregarConfiguracao() {
+    const config = localStorage.getItem('pricing_config');
+    if (config) {
+        const dados = JSON.parse(config);
+        
+        // Restaurar valores básicos
+        if (dados.base_price) document.getElementById('base_price').value = dados.base_price;
+        if (dados.weight_factor) document.getElementById('weight_factor').value = dados.weight_factor;
+        
+        // Restaurar percentuais de desconto
+        if (dados.tier1_discount) document.getElementById('tier1_discount').value = dados.tier1_discount;
+        if (dados.tier2_discount) document.getElementById('tier2_discount').value = dados.tier2_discount;
+        if (dados.tier3_discount) document.getElementById('tier3_discount').value = dados.tier3_discount;
+        if (dados.tier4_discount) document.getElementById('tier4_discount').value = dados.tier4_discount;
+        if (dados.tier5_discount) document.getElementById('tier5_discount').value = dados.tier5_discount;
+        
+        // Restaurar limites dos tiers
+        if (dados.tier_1_limit) document.getElementById('tier_1_limit').value = dados.tier_1_limit;
+        if (dados.tier_2_limit) document.getElementById('tier_2_limit').value = dados.tier_2_limit;
+        if (dados.tier_3_limit) document.getElementById('tier_3_limit').value = dados.tier_3_limit;
+        if (dados.tier_4_limit) document.getElementById('tier_4_limit').value = dados.tier_4_limit;
+        if (dados.tier_5_limit) document.getElementById('tier_5_limit').value = dados.tier_5_limit;
+        if (dados.tier_6_limit) document.getElementById('tier_6_limit').value = dados.tier_6_limit;
+        
+        // Restaurar preços dos tiers
+        if (dados.tier_1_price) document.getElementById('tier_1_price').value = dados.tier_1_price;
+        if (dados.tier_2_price) document.getElementById('tier_2_price').value = dados.tier_2_price;
+        if (dados.tier_3_price) document.getElementById('tier_3_price').value = dados.tier_3_price;
+        if (dados.tier_4_price) document.getElementById('tier_4_price').value = dados.tier_4_price;
+        if (dados.tier_5_price) document.getElementById('tier_5_price').value = dados.tier_5_price;
+        if (dados.tier_6_price) document.getElementById('tier_6_price').value = dados.tier_6_price;
+        
+        // Restaurar modo manual dos tiers
+        if (dados.modo_manual) {
+            if (dados.modo_manual.tier_1) toggleTierEdit(1);
+            if (dados.modo_manual.tier_2) toggleTierEdit(2);
+            if (dados.modo_manual.tier_3) toggleTierEdit(3);
+            if (dados.modo_manual.tier_4) toggleTierEdit(4);
+            if (dados.modo_manual.tier_5) toggleTierEdit(5);
+            if (dados.modo_manual.tier_6) toggleTierEdit(6);
+        }
+        
+        return true;
+    }
+    return false;
+}
+
+// Funções para sincronização automática dos preços dos tiers
+function calculateTierPrice(tierNumber) {
+    const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+    if (basePrice <= 0) {
+        alert('Defina um preço base primeiro!');
+        return;
+    }
+    
+    // Verificar se o tier está em modo manual
+    const tierPriceField = `tier_${tierNumber}_price`;
+    const input = document.getElementById(tierPriceField);
+    if (!input.readOnly) {
+        // Se está em modo manual, não recalcular automaticamente
+        return;
+    }
+    
+    let discountPercent = 0;
+    let calculationSpan = '';
+    
+    switch(tierNumber) {
+        case 1:
+            discountPercent = parseFloat(document.getElementById('tier1_discount').value) || 15;
+            calculationSpan = 'tier1_calculation';
+            break;
+        case 2:
+            discountPercent = parseFloat(document.getElementById('tier2_discount').value) || 25;
+            calculationSpan = 'tier2_calculation';
+            break;
+        case 3:
+            discountPercent = parseFloat(document.getElementById('tier3_discount').value) || 35;
+            calculationSpan = 'tier3_calculation';
+            break;
+        case 4:
+            discountPercent = parseFloat(document.getElementById('tier4_discount').value) || 45;
+            calculationSpan = 'tier4_calculation';
+            break;
+        case 5:
+            discountPercent = parseFloat(document.getElementById('tier5_discount').value) || 55;
+            calculationSpan = 'tier5_calculation';
+            break;
+        case 6:
+            discountPercent = parseFloat(document.getElementById('tier5_discount').value) || 55;
+            calculationSpan = 'tier6_calculation';
+            break;
+    }
+    
+    const tierPrice = basePrice * (1 - discountPercent / 100);
+    document.getElementById(tierPriceField).value = tierPrice.toFixed(4);
+    document.getElementById(calculationSpan).innerHTML = 
+        `Base: R$ ${formatarMoeda(basePrice)} - ${discountPercent}% = R$ ${formatarMoeda(tierPrice)}`;
+    
+    // Salvar configuração após alteração
+    salvarConfiguracao();
+}
+
+function applyDiscounts() {
+    // Aplicar todos os descontos de uma vez
+    calculateTierPrice(1);
+    calculateTierPrice(2);
+    calculateTierPrice(3);
+    calculateTierPrice(4);
+    calculateTierPrice(5);
+    calculateTierPrice(6);
+    
+    // Atualizar textos de ajuda e cálculo
+    updateDiscountHelpTexts();
+    updateCalculationTexts();
+    
+    // Mostrar mensagem de sucesso
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-success alert-dismissible fade show mt-2';
+    alertDiv.innerHTML = `
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>Descontos aplicados com sucesso!</strong> Os preços dos 6 tiers foram recalculados baseado no preço base.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Inserir após o card de percentuais
+    const discountCard = document.querySelector('.card.border-warning');
+    discountCard.parentNode.insertBefore(alertDiv, discountCard.nextSibling);
+    
+    // Auto-remover após 5 segundos
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+function updateAllTierPrices() {
+    const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+    if (basePrice <= 0) return;
+    
+    // Atualizar todos os preços dos tiers automaticamente
+    calculateTierPrice(1);
+    calculateTierPrice(2);
+    calculateTierPrice(3);
+    calculateTierPrice(4);
+    calculateTierPrice(5);
+    calculateTierPrice(6);
+    
+    // Atualizar textos de cálculo
+    updateCalculationTexts();
+    
+    // Atualizar status de sincronização
+    updateSyncStatus();
+}
+
+function updateDiscountHelpTexts() {
+    // Atualizar textos de ajuda dos percentuais de desconto
+    const tier1Discount = document.getElementById('tier1_discount').value || 15;
+    const tier2Discount = document.getElementById('tier2_discount').value || 25;
+    const tier3Discount = document.getElementById('tier3_discount').value || 35;
+    const tier4Discount = document.getElementById('tier4_discount').value || 45;
+    const tier5Discount = document.getElementById('tier5_discount').value || 55;
+    
+    // Atualizar os textos de ajuda
+    document.querySelector('#tier1_discount').nextElementSibling.innerHTML = `${tier1Discount}% desconto`;
+    document.querySelector('#tier2_discount').nextElementSibling.innerHTML = `${tier2Discount}% desconto`;
+    document.querySelector('#tier3_discount').nextElementSibling.innerHTML = `${tier3Discount}% desconto`;
+    document.querySelector('#tier4_discount').nextElementSibling.innerHTML = `${tier4Discount}% desconto`;
+    document.querySelector('#tier5_discount').nextElementSibling.innerHTML = `${tier5Discount}% desconto`;
+    
+    // Atualizar também os textos de cálculo dos tiers se houver preço base
+    const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+    if (basePrice > 0) {
+        updateCalculationTexts();
+    }
+}
+
+function updateCalculationTexts() {
+    const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+    if (basePrice <= 0) return;
+    
+    // Atualizar textos de cálculo para todos os tiers
+    for (let i = 1; i <= 6; i++) {
+        const calculationSpan = document.getElementById(`tier${i}_calculation`);
+        if (calculationSpan) {
+            let discountPercent = 0;
+            switch(i) {
+                case 1: discountPercent = parseFloat(document.getElementById('tier1_discount').value) || 15; break;
+                case 2: discountPercent = parseFloat(document.getElementById('tier2_discount').value) || 25; break;
+                case 3: discountPercent = parseFloat(document.getElementById('tier3_discount').value) || 35; break;
+                case 4: discountPercent = parseFloat(document.getElementById('tier4_discount').value) || 45; break;
+                case 5: discountPercent = parseFloat(document.getElementById('tier5_discount').value) || 55; break;
+                case 6: discountPercent = parseFloat(document.getElementById('tier5_discount').value) || 55; break;
+            }
+            
+                         const tierPrice = basePrice * (1 - discountPercent / 100);
+             calculationSpan.innerHTML = `Base: R$ ${formatarMoeda(basePrice)} - ${discountPercent}% = R$ ${formatarMoeda(tierPrice)}`;
+        }
+    }
+}
+
+function updateSyncStatus() {
+    const syncStatus = document.getElementById('sync-status');
+    const basePriceHelp = document.getElementById('base_price_help');
+    
+    // Verificar se todos os tiers estão em modo automático
+    const allAuto = [1, 2, 3, 4, 5, 6].every(tierNumber => {
+        const input = document.getElementById(`tier_${tierNumber}_price`);
+        return input.readOnly;
+    });
+    
+    if (allAuto) {
+        syncStatus.className = 'input-group-text bg-success text-white';
+        syncStatus.innerHTML = '<i class="fas fa-link"></i>';
+        basePriceHelp.innerHTML = 'Preço unitário base - alterações sincronizam automaticamente com os 6 tiers';
+        basePriceHelp.className = 'text-success';
+    } else {
+        syncStatus.className = 'input-group-text bg-warning text-dark';
+        syncStatus.innerHTML = '<i class="fas fa-unlink"></i>';
+        basePriceHelp.innerHTML = 'Preço unitário base - alguns tiers estão em modo manual';
+        basePriceHelp.className = 'text-warning';
+    }
+}
+
+function toggleTierEdit(tierNumber) {
+    const tierPriceField = `tier_${tierNumber}_price`;
+    const input = document.getElementById(tierPriceField);
+    const editButton = input.parentNode.querySelector('.btn-outline-warning, .btn-warning');
+    
+    if (input.readOnly) {
+        // Habilitar edição manual
+        input.readOnly = false;
+        input.classList.add('border-warning');
+        editButton.classList.remove('btn-outline-warning');
+        editButton.classList.add('btn-warning');
+        editButton.innerHTML = '<i class="fas fa-save"></i> Salvar';
+        editButton.title = 'Salvar e voltar ao modo automático';
+        
+        // Atualizar texto de ajuda
+        const calculationSpan = document.getElementById(`tier${tierNumber}_calculation`);
+        calculationSpan.innerHTML = '<span class="text-warning">Modo de edição manual ativado</span>';
+        
+    } else {
+        // Desabilitar edição e voltar ao automático
+        input.readOnly = true;
+        input.classList.remove('border-warning');
+        editButton.classList.remove('btn-warning');
+        editButton.classList.add('btn-outline-warning');
+        editButton.innerHTML = '<i class="fas fa-edit"></i> Editar';
+        editButton.title = 'Editar manualmente';
+        
+        // Recalcular automaticamente
+        calculateTierPrice(tierNumber);
+    }
+    
+    // Atualizar status de sincronização
+    updateSyncStatus();
+    
+    // Salvar configuração após alteração
+    salvarConfiguracao();
+}
+
+function resetToAuto() {
+    // Resetar todos os campos para modo automático
+    [1, 2, 3, 4, 5, 6].forEach(tierNumber => {
+        const tierPriceField = `tier_${tierNumber}_price`;
+        const input = document.getElementById(tierPriceField);
+        const editButton = input.parentNode.querySelector('.btn-warning, .btn-outline-warning');
+        
+        // Forçar modo automático
+        input.readOnly = true;
+        input.classList.remove('border-warning');
+        editButton.classList.remove('btn-warning');
+        editButton.classList.add('btn-outline-warning');
+        editButton.innerHTML = '<i class="fas fa-edit"></i>';
+        editButton.title = 'Editar manualmente';
+    });
+    
+    // Recalcular todos os preços
+    updateAllTierPrices();
+    
+    // Atualizar textos de ajuda e cálculo
+    updateDiscountHelpTexts();
+    updateCalculationTexts();
+    
+    // Atualizar status de sincronização
+    updateSyncStatus();
+    
+    // Mostrar mensagem de sucesso
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-info alert-dismissible fade show mt-2';
+    alertDiv.innerHTML = `
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Resetado para modo automático!</strong> Todos os preços dos 6 tiers agora são calculados automaticamente.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const discountCard = document.querySelector('.card.border-warning');
+    discountCard.parentNode.insertBefore(alertDiv, discountCard.nextSibling);
+    
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+// Event listeners para sincronização automática
+document.addEventListener('DOMContentLoaded', function() {
+    // Sincronizar quando o preço base mudar
+    document.getElementById('base_price').addEventListener('input', function() {
+        // Aguardar um pouco para não sobrecarregar
+        clearTimeout(window.tierUpdateTimeout);
+        window.tierUpdateTimeout = setTimeout(updateAllTierPrices, 500);
+    });
+    
+    // Sincronizar quando os percentuais de desconto mudarem
+    ['tier1_discount', 'tier2_discount', 'tier3_discount', 'tier4_discount', 'tier5_discount'].forEach(id => {
+        document.getElementById(id).addEventListener('input', function() {
+            clearTimeout(window.tierUpdateTimeout);
+            window.tierUpdateTimeout = setTimeout(updateAllTierPrices, 500);
+            // Atualizar texto de ajuda em tempo real
+            updateDiscountHelpTexts();
+        });
+    });
+    
+    // Calcular preços iniciais se houver preço base
+    const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+    if (basePrice > 0) {
+        updateAllTierPrices();
+    }
+    
+    // Atualizar status inicial de sincronização
+    updateSyncStatus();
+    
+         // Atualizar textos de ajuda iniciais
+     updateDiscountHelpTexts();
+     
+     // Atualizar visualização inicial dos tiers
+     updateTiersVisualization();
+});
+
+function simulatePrice() {
+    const quantity = parseInt(document.getElementById('test_quantity').value) || 0;
+    const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+    const weightFactor = parseFloat(document.getElementById('weight_factor').value) || 1.0;
+    
+    // Obter todos os limites e preços dos tiers
+    const tiers = [];
+    for (let i = 1; i <= 6; i++) {
+        const limit = parseInt(document.getElementById(`tier_${i}_limit`).value) || 0;
+        const price = parseFloat(document.getElementById(`tier_${i}_price`).value) || 0;
+        tiers.push({ limit, price });
+    }
+    
+    let totalCost = 0;
+    let remaining = quantity;
+    let breakdown = [];
+    
+    // Verificar se há configuração de tiers
+    if (!tiers[0].limit) {
+        // Preço simples sem tiers
+        totalCost = quantity * basePrice;
+        breakdown.push(`<strong>Tier 1 (Preço Base):</strong> ${formatarNumero(quantity)} × R$ ${formatarMoeda(basePrice)} = R$ ${formatarMoeda(totalCost)}`);
+    } else {
+        // Simulação com todos os 6 tiers
+        let currentTier = 1;
+        let previousLimit = 0;
+        
+        // Tier 1: Preço base
+        if (remaining > 0) {
+            const tier1Quantity = Math.min(remaining, tiers[0].limit);
+            const tier1Cost = tier1Quantity * basePrice;
+            totalCost += tier1Cost;
+            breakdown.push(`<strong>Tier 1 (Preço Base):</strong> ${formatarNumero(tier1Quantity)} × R$ ${formatarMoeda(basePrice)} = R$ ${formatarMoeda(tier1Cost)}`);
+            remaining -= tier1Quantity;
+            previousLimit = tiers[0].limit;
+        }
+        
+        // Tiers 2-6: Preços com desconto
+        for (let i = 1; i < 6 && remaining > 0; i++) {
+            if (tiers[i].limit && tiers[i-1].price) {
+                const tierQuantity = Math.min(remaining, tiers[i].limit - previousLimit);
+                const tierCost = tierQuantity * tiers[i-1].price;
+                totalCost += tierCost;
+                breakdown.push(`<strong>Tier ${i+1} (${formatarMoeda(tiers[i-1].price)}):</strong> ${formatarNumero(tierQuantity)} × R$ ${formatarMoeda(tiers[i-1].price)} = R$ ${formatarMoeda(tierCost)}`);
+                remaining -= tierQuantity;
+                previousLimit = tiers[i].limit;
+            }
+        }
+        
+        // Tier 7+: Preço do último tier
+        if (remaining > 0 && tiers[5].price) {
+            const tier7Cost = remaining * tiers[5].price;
+            totalCost += tier7Cost;
+            breakdown.push(`<strong>Tier 7+ (${formatarMoeda(tiers[5].price)}):</strong> ${formatarNumero(remaining)} × R$ ${formatarMoeda(tiers[5].price)} = R$ ${formatarMoeda(tier7Cost)}`);
+        }
+    }
+    
+    const weightedCost = totalCost * weightFactor;
+    
+    // Criar resumo visual dos tiers
+    let tiersSummary = '<div class="mb-2"><strong>Resumo dos Tiers:</strong><br>';
+    tiersSummary += `Tier 1: 0-${formatarNumero(tiers[0].limit || '∞')} = R$ ${formatarMoeda(basePrice)}<br>`;
+    for (let i = 1; i < 6; i++) {
+        if (tiers[i].limit) {
+            const prevLimit = tiers[i-1].limit || 0;
+            tiersSummary += `Tier ${i+1}: ${formatarNumero(prevLimit+1)}-${formatarNumero(tiers[i].limit)} = R$ ${formatarMoeda(tiers[i-1].price)}<br>`;
+        }
+    }
+    if (tiers[5].price) {
+        const lastLimit = tiers[4].limit || 0;
+        tiersSummary += `Tier 7+: ${formatarNumero(lastLimit+1)}+ = R$ ${formatarMoeda(tiers[5].price)}`;
+    }
+    tiersSummary += '</div>';
+    
+    const resultDiv = document.getElementById('simulation_result');
+    resultDiv.innerHTML = `
+        <div class="alert alert-info">
+            ${tiersSummary}
+            <hr class="my-2">
+            <strong>Simulação para ${formatarNumero(quantity)} unidades:</strong><br>
+            ${breakdown.join('<br>')}
+            <hr class="my-2">
+            <strong>Subtotal:</strong> R$ ${formatarMoeda(totalCost)}<br>
+            <strong>Peso:</strong> ${weightFactor}x<br>
+            <strong>Total Final:</strong> R$ ${formatarMoeda(weightedCost)}
+        </div>
+    `;
+}
+
+// Função para visualizar a estrutura dos tiers
+function updateTiersVisualization() {
+    const basePrice = parseFloat(document.getElementById('base_price').value) || 0;
+    const tiers = [];
+    
+    for (let i = 1; i <= 6; i++) {
+        const limit = parseInt(document.getElementById(`tier_${i}_limit`).value) || 0;
+        const price = parseFloat(document.getElementById(`tier_${i}_price`).value) || 0;
+        tiers.push({ limit, price });
+    }
+    
+    const visualizationDiv = document.getElementById('tiers_visualization');
+    
+    if (!basePrice) {
+        visualizationDiv.innerHTML = '<div class="text-muted">Configure um preço base para visualizar os tiers</div>';
+        return;
+    }
+    
+    let html = '<div class="table-responsive"><table class="table table-sm table-bordered">';
+    html += '<thead class="table-light"><tr><th>Tier</th><th>Range</th><th>Preço</th><th>Desconto</th></tr></thead><tbody>';
+    
+    // Tier 1 (Preço base)
+    html += `<tr class="table-primary">
+        <td><strong>Tier 1</strong></td>
+        <td>0 - ${formatarNumero(tiers[0].limit || '∞')}</td>
+        <td>R$ ${formatarMoeda(basePrice)}</td>
+        <td>0%</td>
+    </tr>`;
+    
+    // Tiers 2-6
+    for (let i = 1; i < 6; i++) {
+        if (tiers[i].limit && tiers[i-1].price) {
+            const prevLimit = tiers[i-1].limit || 0;
+            const discount = ((basePrice - tiers[i-1].price) / basePrice * 100).toFixed(1);
+            html += `<tr class="table-${i % 2 === 0 ? 'light' : 'white'}">
+                <td><strong>Tier ${i+1}</strong></td>
+                <td>${formatarNumero(prevLimit + 1)} - ${formatarNumero(tiers[i].limit)}</td>
+                <td>R$ ${formatarMoeda(tiers[i-1].price)}</td>
+                <td>${discount}%</td>
+            </tr>`;
+        }
+    }
+    
+    // Tier 7+
+    if (tiers[5].price) {
+        const lastLimit = tiers[4].limit || 0;
+        const discount = ((basePrice - tiers[5].price) / basePrice * 100).toFixed(1);
+        html += `<tr class="table-warning">
+            <td><strong>Tier 7+</strong></td>
+            <td>${formatarNumero(lastLimit + 1)}+</td>
+            <td>R$ ${formatarMoeda(tiers[5].price)}</td>
+            <td>${discount}%</td>
+        </tr>`;
+    }
+    
+    html += '</tbody></table></div>';
+    visualizationDiv.innerHTML = html;
+}
+
+// Atualizar simulação automaticamente
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', () => {
+        if (document.getElementById('test_quantity').value) {
+            simulatePrice();
+        }
+        // Atualizar visualização dos tiers
+        updateTiersVisualization();
+    });
+});
+</script>
+{% endblock %}

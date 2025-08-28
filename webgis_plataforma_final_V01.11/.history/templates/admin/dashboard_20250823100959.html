@@ -1,0 +1,132 @@
+
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2>{{ stats.title }}</h2>
+<p>Bem-vindo(a) ao seu painel de controle, {{ current_user.email }}.</p>
+
+<div class="row">
+    {% if current_user.role == 'super_admin' %}
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-dark">
+            <div class="card-body">
+                <h5 class="card-title">Empresas</h5>
+                <p class="card-text fs-2">{{ stats.company_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-secondary">
+            <div class="card-body">
+                <h5 class="card-title">Usuários Admin</h5>
+                <p class="card-text fs-2">{{ stats.user_count }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">Projetos</h5>
+                <p class="card-text fs-2">{{ stats.project_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Camadas</h5>
+                <p class="card-text fs-2">{{ stats.layer_count }}</p>
+            </div>
+        </div>
+    </div>
+    
+    {% if current_user.role != 'super_admin' %}
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Uso de Espaço</h5>
+                <p class="card-text fs-4">{{ "%.2f"|format(stats.storage_usage) }} / {{ stats.storage_limit }} MB</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Acessos aos Mapas</h5>
+                <p class="card-text fs-2">{{ stats.map_access_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<h4>Ações Rápidas</h4>
+<div class="d-flex gap-2">
+    {% if current_user.company_id %}
+    <a href="{{ url_for('upload_layer_page') }}" class="btn btn-primary">Nova Camada</a>
+    <a href="{{ url_for('manage_projects') }}" class="btn btn-secondary">Gerenciar Projetos</a>
+    <a href="{{ url_for('manage_shared_maps') }}" class="btn btn-secondary">Mapas Públicos</a>
+    <a href="{{ url_for('portal_settings') }}" class="btn btn-secondary">Customizar Portal</a>
+    {% endif %}
+    {% if current_user.role == 'super_admin' %}
+    <a href="{{ url_for('manage_companies') }}" class="btn btn-dark">Gerenciar Empresas</a>
+    <a href="{{ url_for('manage_users') }}" class="btn btn-dark">Gerenciar Usuários</a>
+    <a href="{{ url_for('manage_pricing') }}" class="btn btn-warning">
+        <i class="fas fa-dollar-sign me-2"></i>Configurar Preços
+    </a>
+    {% endif %}
+</div>
+
+{% if current_user.company_id %}
+<hr>
+<h4>Camadas da Empresa</h4>
+<div class="table-responsive">
+  <table class="table table-sm align-middle">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Projeto</th>
+        <th>Grupo</th>
+        <th>Tipo</th>
+        <th>Arquivo</th>
+        <th class="text-end">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in current_user.company.layers %}
+      <tr>
+        <td>
+          <form class="d-flex gap-2" method="post" action="{{ url_for('rename_layer', layer_id=l.id) }}">
+            <input class="form-control form-control-sm" name="name" value="{{ l.name }}">
+            <button class="btn btn-sm btn-outline-primary">Renomear</button>
+          </form>
+        </td>
+        <td>{{ l.project.name }}</td>
+        <td>{{ l.thematic_group }}</td>
+        <td>{{ l.layer_type }}</td>
+        <td class="small text-truncate" style="max-width:220px">{{ l.filename }}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('edit_layer_symbology', layer_id=l.id) }}">Simbologia</a>
+          <form class="d-inline" method="post" enctype="multipart/form-data" action="{{ url_for('replace_layer_file', layer_id=l.id) }}">
+            <input type="file" name="file" class="form-control form-control-sm d-inline" style="width:220px" required>
+            <button class="btn btn-sm btn-outline-warning">Atualizar Arquivo</button>
+          </form>
+          <form class="d-inline" method="post" action="{{ url_for('delete_layer', layer_id=l.id) }}" onsubmit="return confirm('Excluir camada \"{{ l.name }}\"? Essa ação é irreversível.');">
+            <button class="btn btn-sm btn-outline-danger">Excluir</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">Nenhuma camada encontrada.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}

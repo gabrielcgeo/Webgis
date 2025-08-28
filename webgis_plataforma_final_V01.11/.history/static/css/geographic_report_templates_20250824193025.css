@@ -1,0 +1,403 @@
+/* Estilos para Templates de Relatório Geográfico */
+
+/* Cards de Template */
+.template-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.template-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.template-preview {
+    position: relative;
+    overflow: hidden;
+}
+
+.template-preview img {
+    transition: transform 0.3s ease;
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.template-card:hover .template-preview img {
+    transform: scale(1.05);
+}
+
+/* Overlay dos Templates */
+.template-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.9), rgba(40, 167, 69, 0.9));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.template-card:hover .template-overlay {
+    opacity: 1;
+}
+
+.template-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+}
+
+.template-actions .btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.template-actions .btn:hover {
+    transform: scale(1.05);
+}
+
+/* Badges de Categoria */
+.template-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+    z-index: 2;
+}
+
+.template-badge.story-focused {
+    background: linear-gradient(135deg, #6f42c1, #8e44ad);
+}
+
+.template-badge.map-focused {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.template-badge.balanced {
+    background: linear-gradient(135deg, #fd7e14, #e67e22);
+}
+
+/* Características dos Templates */
+.template-features {
+    margin-top: 1rem;
+}
+
+.template-features .badge {
+    border-radius: 6px;
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+    font-weight: 500;
+}
+
+/* Filtros */
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.form-select, .form-control {
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Botões */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+}
+
+.btn-outline-primary {
+    border: 2px solid #007bff;
+    color: #007bff;
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: #007bff;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #6c757d;
+    color: #6c757d;
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+/* Header */
+.h2 {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Modal de Preview */
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 16px 16px 0 0;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.modal-title {
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.template-preview-container {
+    padding: 1rem 0;
+}
+
+.template-preview-container h4 {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.template-details {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.template-elements h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.template-preview-visual img {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .template-card {
+        margin-bottom: 1rem;
+    }
+    
+    .template-actions {
+        flex-direction: row;
+    }
+    
+    .template-actions .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .template-badge {
+        font-size: 0.65rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Animações */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.template-card {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.template-card:nth-child(1) { animation-delay: 0.1s; }
+.template-card:nth-child(2) { animation-delay: 0.2s; }
+.template-card:nth-child(3) { animation-delay: 0.3s; }
+.template-card:nth-child(4) { animation-delay: 0.4s; }
+.template-card:nth-child(5) { animation-delay: 0.5s; }
+.template-card:nth-child(6) { animation-delay: 0.6s; }
+.template-card:nth-child(7) { animation-delay: 0.7s; }
+.template-card:nth-child(8) { animation-delay: 0.8s; }
+.template-card:nth-child(9) { animation-delay: 0.9s; }
+.template-card:nth-child(10) { animation-delay: 1s; }
+
+/* Estados de Loading */
+.template-card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.template-card.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #007bff;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Melhorias de Acessibilidade */
+.template-card:focus-within {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+}
+
+.template-actions .btn:focus {
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
+}
+
+/* Efeitos de Hover Avançados */
+.template-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(40, 167, 69, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.template-card:hover::before {
+    opacity: 1;
+}
+
+/* Melhorias nos Filtros */
+#category-filter, #layout-filter, #complexity-filter {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* Estilos para Grid Responsivo */
+@media (min-width: 1200px) {
+    .col-lg-4 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 767px) {
+    .col-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+/* Melhorias no Header */
+.h2 i {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Estilos para o Modal */
+.modal-xl {
+    max-width: 90%;
+}
+
+@media (max-width: 1200px) {
+    .modal-xl {
+        max-width: 95%;
+    }
+}
+
+/* Melhorias nos Botões de Ação */
+.template-actions .btn-light {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.template-actions .btn-light:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Efeitos de Sombra Avançados */
+.template-card {
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        0 4px 8px rgba(0, 0, 0, 0.06),
+        0 8px 16px rgba(0, 0, 0, 0.04);
+}
+
+.template-card:hover {
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.12),
+        0 8px 16px rgba(0, 0, 0, 0.08),
+        0 16px 32px rgba(0, 0, 0, 0.06);
+}

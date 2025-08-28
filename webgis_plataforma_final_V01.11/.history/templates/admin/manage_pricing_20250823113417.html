@@ -1,0 +1,120 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>
+        <i class="fas fa-dollar-sign text-warning me-2"></i>
+        Configurações de Preços
+    </h2>
+    <a href="{{ url_for('edit_pricing_config', id=0) }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nova Configuração
+    </a>
+</div>
+
+<div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Informação:</strong> Estas configurações definem como os preços são calculados na calculadora pública. 
+    Você pode definir preços em camadas (tiers) para diferentes volumes.
+</div>
+
+<div class="row">
+    {% for config in configs %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-tag me-2"></i>{{ config.name }}
+                </h5>
+                <span class="badge bg-{{ 'primary' if config.category == 'base' else 'success' if config.category == 'tier' else 'warning' }}">
+                    {{ config.category.title() }}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Preço Base:</label>
+                    <div class="fw-bold text-success">R$ {{ "%.4f"|format(config.base_price) }}</div>
+                </div>
+
+                {% if config.tier_1_limit %}
+                <div class="mb-3">
+                    <label class="form-label text-muted">Estrutura de Tiers:</label>
+                    <div class="small">
+                        <div>Tier 1 (0-{{ config.tier_1_limit }}): R$ {{ "%.4f"|format(config.base_price) }}</div>
+                        {% if config.tier_1_price %}
+                        <div>Tier 2 ({{ config.tier_1_limit + 1 }}-{{ config.tier_2_limit or 'Ilimitado' }}): R$ {{ "%.4f"|format(config.tier_1_price) }}</div>
+                        {% endif %}
+                        {% if config.tier_2_price %}
+                        <div>Tier 3 ({{ config.tier_2_limit + 1 }}-{{ config.tier_3_limit or 'Ilimitado' }}): R$ {{ "%.4f"|format(config.tier_2_price) }}</div>
+                        {% endif %}
+                        {% if config.tier_3_price %}
+                        <div>Tier 4+ ({{ config.tier_3_limit + 1 }}+): R$ {{ "%.4f"|format(config.tier_3_price) }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Fator de Peso:</label>
+                    <div class="fw-bold">{{ config.weight_factor }}x</div>
+                </div>
+
+                <div class="mb-3">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        Atualizado em: {{ config.updated_at.strftime('%d/%m/%Y %H:%M') }}
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('edit_pricing_config', id=config.id) }}" class="btn btn-outline-primary btn-sm flex-fill">
+                        <i class="fas fa-edit me-1"></i>Editar
+                    </a>
+                    <form method="post" action="{{ url_for('delete_pricing_config', id=config.id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                onclick="return confirm('Desativar esta configuração de preços?')">
+                            <i class="fas fa-trash me-1"></i>Desativar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+            <h5>Nenhuma configuração de preços encontrada</h5>
+            <p>Crie sua primeira configuração de preços para começar.</p>
+            <a href="{{ url_for('edit_pricing_config', id=0) }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Criar Primeira Configuração
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-calculator me-2"></i>
+                Testar Calculadora
+            </h5>
+        </div>
+        <div class="card-body">
+            <p>Teste a calculadora com as configurações atuais:</p>
+            <a href="{{ url_for('home') }}" class="btn btn-success" target="_blank">
+                <i class="fas fa-external-link-alt me-2"></i>
+                Abrir Calculadora
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Voltar ao Dashboard
+    </a>
+</div>
+{% endblock %}

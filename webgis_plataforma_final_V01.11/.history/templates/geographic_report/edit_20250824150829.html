@@ -1,0 +1,412 @@
+{% extends 'layout.html' %}
+{% block title %}Editar Relatório - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid h-100">
+    <!-- Header do Editor -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-secondary" onclick="history.back()">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar
+                    </button>
+                    <div>
+                        <h1 class="h3 mb-1" id="report-title">Carregando...</h1>
+                        <p class="text-muted mb-0" id="report-description">Carregando descrição...</p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="previewReport()">
+                        <i class="fas fa-eye me-2"></i>Pré-visualizar
+                    </button>
+                    <button class="btn btn-success" onclick="publishReport()">
+                        <i class="fas fa-globe me-2"></i>Publicar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barra de Progresso -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">Progresso do Relatório</span>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar" id="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-muted">Configuração Básica</small>
+                        <small class="text-muted">Pontos de Parada</small>
+                        <small class="text-muted">Conteúdo</small>
+                        <small class="text-muted">Design</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interface Principal do Editor -->
+    <div class="row h-100">
+        <!-- Painel Esquerdo - Roteiro -->
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-route me-2"></i>Roteiro da História
+                    </h5>
+                    <button class="btn btn-primary btn-sm" onclick="addNewStop()">
+                        <i class="fas fa-plus me-1"></i>Nova Parada
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div id="stops-container" class="list-group list-group-flush">
+                        <!-- Pontos de parada serão carregados aqui -->
+                        <div class="text-center py-4">
+                            <i class="fas fa-spinner fa-spin fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">Carregando roteiro...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Central - Mapa -->
+        <div class="col-md-5">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-map me-2"></i>Mapa Interativo
+                    </h5>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-secondary" onclick="resetMapView()">
+                            <i class="fas fa-home"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map-container" style="height: 100%; min-height: 500px;">
+                        <!-- Mapa será carregado aqui -->
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <div class="text-center">
+                                <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Carregando mapa...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Direito - Conteúdo -->
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Conteúdo da Parada
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="content-editor">
+                        <div class="text-center py-4">
+                            <i class="fas fa-hand-pointer fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">Selecione uma parada para editar o conteúdo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Nova Parada -->
+<div class="modal fade" id="newStopModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Parada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="new-stop-form">
+                    <div class="mb-3">
+                        <label class="form-label">Título da Parada</label>
+                        <input type="text" class="form-control" id="stop-title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" id="stop-description" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Transição</label>
+                        <select class="form-select" id="stop-transition">
+                            <option value="fly-to">Voo Suave</option>
+                            <option value="jump-to">Corte Seco</option>
+                            <option value="zoom-progressive">Zoom Progressivo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="createNewStop()">
+                    <i class="fas fa-plus me-2"></i>Criar Parada
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Configurações -->
+<div class="modal fade" id="settingsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Configurações do Relatório</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Informações Básicas</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" class="form-control" id="settings-title">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <textarea class="form-control" id="settings-description" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Camadas do Mapa</h6>
+                        <div id="layers-selection">
+                            <!-- Seleção de camadas será carregada aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveSettings()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="{{ url_for('static', filename='css/geographic_report.css') }}" rel="stylesheet">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/geographic_report_data.js') }}"></script>
+<script src="{{ url_for('static', filename='js/geographic_report_editor.js') }}"></script>
+<script>
+// Inicialização do editor
+document.addEventListener('DOMContentLoaded', function() {
+    initializeEditor();
+});
+
+function initializeEditor() {
+    const reportId = window.location.pathname.split('/').pop();
+    loadReport(reportId);
+}
+
+function addNewStop() {
+    const modal = new bootstrap.Modal(document.getElementById('newStopModal'));
+    modal.show();
+}
+
+function createNewStop() {
+    const title = document.getElementById('stop-title').value;
+    const description = document.getElementById('stop-description').value;
+    const transition = document.getElementById('stop-transition').value;
+    
+    if (!title.trim()) {
+        alert('Por favor, insira um título para a parada.');
+        return;
+    }
+    
+    // Criar nova parada
+    const newStop = {
+        id: Date.now(),
+        title: title,
+        description: description,
+        transition: transition,
+        mapPosition: null,
+        content: {
+            text: '',
+            images: [],
+            videos: [],
+            documents: [],
+            charts: []
+        },
+        layerVisibility: {}
+    };
+    
+    addStopToInterface(newStop);
+    
+    // Fechar modal
+    bootstrap.Modal.getInstance(document.getElementById('newStopModal')).hide();
+    
+    // Limpar formulário
+    document.getElementById('new-stop-form').reset();
+    
+    // Atualizar progresso
+    updateProgress();
+}
+
+function addStopToInterface(stop) {
+    const container = document.getElementById('stops-container');
+    
+    // Remover mensagem de carregamento se existir
+    const loadingElement = container.querySelector('.text-center');
+    if (loadingElement) {
+        loadingElement.remove();
+    }
+    
+    const stopElement = document.createElement('div');
+    stopElement.className = 'list-group-item list-group-item-action';
+    stopElement.setAttribute('data-stop-id', stop.id);
+    stopElement.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+                <h6 class="mb-1">${stop.title}</h6>
+                <p class="mb-1 small text-muted">${stop.description || 'Sem descrição'}</p>
+                <small class="text-muted">
+                    <i class="fas fa-route me-1"></i>${stop.transition}
+                </small>
+            </div>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary btn-sm" onclick="editStop(${stop.id})">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteStop(${stop.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(stopElement);
+    
+    // Selecionar automaticamente a nova parada
+    selectStop(stop.id);
+}
+
+function selectStop(stopId) {
+    // Remover seleção anterior
+    document.querySelectorAll('.list-group-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Selecionar nova parada
+    const stopElement = document.querySelector(`[data-stop-id="${stopId}"]`);
+    if (stopElement) {
+        stopElement.classList.add('active');
+        loadStopContent(stopId);
+    }
+}
+
+function loadStopContent(stopId) {
+    // Implementar carregamento do conteúdo da parada
+    console.log(`Carregando conteúdo da parada ${stopId}`);
+}
+
+function editStop(stopId) {
+    // Implementar edição da parada
+    console.log(`Editando parada ${stopId}`);
+}
+
+function deleteStop(stopId) {
+    if (confirm('Tem certeza que deseja excluir esta parada?')) {
+        const stopElement = document.querySelector(`[data-stop-id="${stopId}"]`);
+        if (stopElement) {
+            stopElement.remove();
+            updateProgress();
+        }
+    }
+}
+
+function updateProgress() {
+    const stops = document.querySelectorAll('[data-stop-id]');
+    const totalStops = stops.length;
+    
+    let completedSteps = 0;
+    
+    // Verificar configuração básica
+    if (document.getElementById('report-title').textContent !== 'Carregando...') {
+        completedSteps++;
+    }
+    
+    // Verificar pontos de parada
+    if (totalStops > 0) {
+        completedSteps++;
+    }
+    
+    // Verificar conteúdo (simplificado)
+    if (totalStops > 0) {
+        completedSteps++;
+    }
+    
+    // Verificar design (simplificado)
+    completedSteps++;
+    
+    const percentage = Math.round((completedSteps / 4) * 100);
+    
+    document.getElementById('progress-percentage').textContent = `${percentage}%`;
+    document.getElementById('progress-bar').style.width = `${percentage}%`;
+    
+    // Atualizar classe da barra de progresso
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.className = 'progress-bar';
+    
+    if (percentage < 25) {
+        progressBar.classList.add('bg-danger');
+    } else if (percentage < 50) {
+        progressBar.classList.add('bg-warning');
+    } else if (percentage < 75) {
+        progressBar.classList.add('bg-info');
+    } else {
+        progressBar.classList.add('bg-success');
+    }
+}
+
+function previewReport() {
+    // Implementar pré-visualização
+    alert('Funcionalidade de pré-visualização será implementada em breve!');
+}
+
+function publishReport() {
+    // Implementar publicação
+    alert('Funcionalidade de publicação será implementada em breve!');
+}
+
+function resetMapView() {
+    // Implementar reset do mapa
+    console.log('Resetando visualização do mapa');
+}
+
+function toggleFullscreen() {
+    // Implementar tela cheia
+    console.log('Alternando tela cheia');
+}
+
+function loadReport(reportId) {
+    // Simular carregamento do relatório
+    setTimeout(() => {
+        document.getElementById('report-title').textContent = 'Relatório de Exemplo';
+        document.getElementById('report-description').textContent = 'Descrição do relatório de exemplo';
+        updateProgress();
+    }, 1000);
+}
+</script>
+{% endblock %}

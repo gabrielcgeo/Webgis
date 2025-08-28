@@ -1,0 +1,535 @@
+{% extends 'layout.html' %}
+{% block title %}Templates de Relatório Geográfico - {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-1">
+                        <i class="fas fa-layer-group text-primary me-2"></i>
+                        Templates de Relatório Geográfico
+                    </h1>
+                    <p class="text-muted mb-0">Escolha um template e personalize-o com seus dados e conteúdo</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('geographic_report') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Voltar
+                    </a>
+                    <button class="btn btn-primary" onclick="showTemplateBuilder()">
+                        <i class="fas fa-magic me-2"></i>Construtor de Template
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros de Template -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <select class="form-select" id="category-filter">
+                                <option value="">Todas as Categorias</option>
+                                <option value="story-focused">História como Foco</option>
+                                <option value="map-focused">Mapa como Foco</option>
+                                <option value="balanced">Equilibrado</option>
+                                <option value="business">Negócios</option>
+                                <option value="education">Educação</option>
+                                <option value="tourism">Turismo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="layout-filter">
+                                <option value="">Todos os Layouts</option>
+                                <option value="classic">Clássico</option>
+                                <option value="immersive">Imersivo</option>
+                                <option value="centered">Centralizado</option>
+                                <option value="timeline">Linha do Tempo</option>
+                                <option value="grid">Grid</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-select" id="complexity-filter">
+                                <option value="">Todas as Complexidades</option>
+                                <option value="simple">Simples</option>
+                                <option value="medium">Médio</option>
+                                <option value="advanced">Avançado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-primary w-100" onclick="applyTemplateFilters()">
+                                <i class="fas fa-filter me-2"></i>Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid de Templates -->
+    <div class="row g-4" id="templates-grid">
+        <!-- Template 1: Análise de Mercado -->
+        <div class="col-lg-4 col-md-6" data-category="story-focused business" data-layout="classic" data-complexity="medium">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/4A90E2/ffffff?text=Análise+de+Mercado" 
+                         class="card-img-top" alt="Análise de Mercado">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('market-analysis')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('market-analysis')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge story-focused">História</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Análise de Mercado</h5>
+                    <p class="card-text text-muted">Template ideal para análises de mercado com foco em narrativa e dados geográficos.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Texto Longo</span>
+                        <span class="badge bg-success me-1">Gráficos</span>
+                        <span class="badge bg-info me-1">Mapas</span>
+                        <span class="badge bg-warning me-1">Dados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 2: Linha do Tempo Histórica -->
+        <div class="col-lg-4 col-md-6" data-category="story-focused education" data-layout="timeline" data-complexity="advanced">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/8E44AD/ffffff?text=Linha+do+Tempo" 
+                         class="card-img-top" alt="Linha do Tempo Histórica">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('historical-timeline')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('historical-timeline')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge story-focused">História</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Linha do Tempo Histórica</h5>
+                    <p class="card-text text-muted">Narrativa cronológica com eventos históricos e localizações geográficas.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Timeline</span>
+                        <span class="badge bg-success me-1">Eventos</span>
+                        <span class="badge bg-info me-1">História</span>
+                        <span class="badge bg-warning me-1">Cronologia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 3: Turismo Interativo -->
+        <div class="col-lg-4 col-md-6" data-category="map-focused tourism" data-layout="immersive" data-complexity="medium">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/27AE60/ffffff?text=Turismo+Interativo" 
+                         class="card-img-top" alt="Turismo Interativo">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('tourism-interactive')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('tourism-interactive')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge map-focused">Mapa</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Turismo Interativo</h5>
+                    <p class="card-text text-muted">Mapa imersivo com pontos turísticos, fotos e informações detalhadas.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Fotos</span>
+                        <span class="badge bg-success me-1">Vídeos</span>
+                        <span class="badge bg-info me-1">Mapa</span>
+                        <span class="badge bg-warning me-1">Turismo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 4: Análise de Localização -->
+        <div class="col-lg-4 col-md-6" data-category="balanced business" data-layout="classic" data-complexity="simple">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/F39C12/ffffff?text=Análise+de+Localização" 
+                         class="card-img-top" alt="Análise de Localização">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('location-analysis')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('location-analysis')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge balanced">Equilibrado</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Análise de Localização</h5>
+                    <p class="card-text text-muted">Equilíbrio perfeito entre mapa e conteúdo para análises de localização.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Análise</span>
+                        <span class="badge bg-success me-1">Localização</span>
+                        <span class="badge bg-info me-1">Dados</span>
+                        <span class="badge bg-warning me-1">Mapa</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 5: Portfólio de Projetos -->
+        <div class="col-lg-4 col-md-6" data-category="map-focused business" data-layout="grid" data-complexity="medium">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/E74C3C/ffffff?text=Portfólio+de+Projetos" 
+                         class="card-img-top" alt="Portfólio de Projetos">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('project-portfolio')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('project-portfolio')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge map-focused">Mapa</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Portfólio de Projetos</h5>
+                    <p class="card-text text-muted">Apresentação visual de projetos em formato de grid com mapa interativo.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Projetos</span>
+                        <span class="badge bg-success me-1">Grid</span>
+                        <span class="badge bg-info me-1">Mapa</span>
+                        <span class="badge bg-warning me-1">Portfólio</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 6: Guia Educacional -->
+        <div class="col-lg-4 col-md-6" data-category="story-focused education" data-layout="classic" data-complexity="simple">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/3498DB/ffffff?text=Guia+Educacional" 
+                         class="card-img-top" alt="Guia Educacional">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('educational-guide')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('educational-guide')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge story-focused">História</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Guia Educacional</h5>
+                    <p class="card-text text-muted">Template educativo com foco na narrativa e aprendizado geográfico.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Educação</span>
+                        <span class="badge bg-success me-1">Narrativa</span>
+                        <span class="badge bg-info me-1">Aprendizado</span>
+                        <span class="badge bg-warning me-1">Guia</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 7: Análise de Dados -->
+        <div class="col-lg-4 col-md-6" data-category="balanced business" data-layout="centered" data-complexity="advanced">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/9B59B6/ffffff?text=Análise+de+Dados" 
+                         class="card-img-top" alt="Análise de Dados">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('data-analysis')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('data-analysis')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge balanced">Equilibrado</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Análise de Dados</h5>
+                    <p class="card-text text-muted">Template avançado para análise de dados com visualizações interativas.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Dados</span>
+                        <span class="badge bg-success me-1">Gráficos</span>
+                        <span class="badge bg-info me-1">Análise</span>
+                        <span class="badge bg-warning me-1">Interativo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 8: Roteiro de Viagem -->
+        <div class="col-lg-4 col-md-6" data-category="map-focused tourism" data-layout="immersive" data-complexity="medium">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/1ABC9C/ffffff?text=Roteiro+de+Viagem" 
+                         class="card-img-top" alt="Roteiro de Viagem">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('travel-route')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('travel-route')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge map-focused">Mapa</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Roteiro de Viagem</h5>
+                    <p class="card-text text-muted">Roteiro interativo com mapa imersivo e pontos de interesse.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Roteiro</span>
+                        <span class="badge bg-success me-1">Viagem</span>
+                        <span class="badge bg-info me-1">Mapa</span>
+                        <span class="badge bg-warning me-1">Turismo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 9: Relatório Corporativo -->
+        <div class="col-lg-4 col-md-6" data-category="story-focused business" data-layout="classic" data-complexity="advanced">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/34495E/ffffff?text=Relatório+Corporativo" 
+                         class="card-img-top" alt="Relatório Corporativo">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('corporate-report')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('corporate-report')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge story-focused">História</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Relatório Corporativo</h5>
+                    <p class="card-text text-muted">Template profissional para relatórios corporativos com dados geográficos.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Corporativo</span>
+                        <span class="badge bg-success me-1">Profissional</span>
+                        <span class="badge bg-info me-1">Relatório</span>
+                        <span class="badge bg-warning me-1">Dados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template 10: Mapa de Eventos -->
+        <div class="col-lg-4 col-md-6" data-category="balanced business" data-layout="grid" data-complexity="simple">
+            <div class="template-card card h-100 shadow-sm border-0">
+                <div class="template-preview position-relative">
+                    <img src="https://via.placeholder.com/400x250/E67E22/ffffff?text=Mapa+de+Eventos" 
+                         class="card-img-top" alt="Mapa de Eventos">
+                    <div class="template-overlay">
+                        <div class="template-actions">
+                            <button class="btn btn-light btn-sm me-2" onclick="previewTemplate('events-map')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="useTemplate('events-map')">
+                                Usar Template
+                            </button>
+                        </div>
+                    </div>
+                    <div class="template-badge balanced">Equilibrado</div>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Mapa de Eventos</h5>
+                    <p class="card-text text-muted">Template equilibrado para mapeamento de eventos e atividades.</p>
+                    <div class="template-features">
+                        <span class="badge bg-primary me-1">Eventos</span>
+                        <span class="badge bg-success me-1">Mapa</span>
+                        <span class="badge bg-info me-1">Atividades</span>
+                        <span class="badge bg-warning me-1">Agenda</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Preview do Template -->
+<div class="modal fade" id="templatePreviewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="preview-title">Preview do Template</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="template-preview-content">
+                    <!-- Conteúdo do preview será carregado aqui -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="use-template-btn">
+                    <i class="fas fa-rocket me-2"></i>Usar Este Template
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<link href="{{ url_for('static', filename='css/geographic_report.css') }}" rel="stylesheet">
+<script>
+// Inicialização da página
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTemplatesPage();
+});
+
+function initializeTemplatesPage() {
+    // Aplicar filtros iniciais
+    applyTemplateFilters();
+}
+
+function applyTemplateFilters() {
+    const categoryFilter = document.getElementById('category-filter').value;
+    const layoutFilter = document.getElementById('layout-filter').value;
+    const complexityFilter = document.getElementById('complexity-filter').value;
+    
+    const templates = document.querySelectorAll('.template-card');
+    
+    templates.forEach(template => {
+        const category = template.closest('[data-category]').dataset.category;
+        const layout = template.closest('[data-layout]').dataset.layout;
+        const complexity = template.closest('[data-complexity]').dataset.complexity;
+        
+        let show = true;
+        
+        if (categoryFilter && !category.includes(categoryFilter)) show = false;
+        if (layoutFilter && layout !== layoutFilter) show = false;
+        if (complexityFilter && complexity !== complexityFilter) show = false;
+        
+        template.closest('.col-lg-4').style.display = show ? 'block' : 'none';
+    });
+}
+
+function previewTemplate(templateId) {
+    const templateData = getTemplateData(templateId);
+    if (!templateData) return;
+    
+    document.getElementById('preview-title').textContent = `Preview: ${templateData.title}`;
+    document.getElementById('template-preview-content').innerHTML = generateTemplatePreview(templateData);
+    document.getElementById('use-template-btn').onclick = () => useTemplate(templateId);
+    
+    const modal = new bootstrap.Modal(document.getElementById('templatePreviewModal'));
+    modal.show();
+}
+
+function useTemplate(templateId) {
+    // Fechar modal
+    bootstrap.Modal.getInstance(document.getElementById('templatePreviewModal')).hide();
+    
+    // Redirecionar para criação com template
+    window.location.href = `/geographic-report/create?template=${templateId}`;
+}
+
+function getTemplateData(templateId) {
+    const templates = {
+        'market-analysis': {
+            title: 'Análise de Mercado',
+            description: 'Template ideal para análises de mercado com foco em narrativa e dados geográficos.',
+            layout: 'classic',
+            focus: 'story',
+            elements: ['title', 'text', 'chart', 'map', 'data']
+        },
+        'historical-timeline': {
+            title: 'Linha do Tempo Histórica',
+            description: 'Narrativa cronológica com eventos históricos e localizações geográficas.',
+            layout: 'timeline',
+            focus: 'story',
+            elements: ['timeline', 'events', 'history', 'chronology']
+        },
+        'tourism-interactive': {
+            title: 'Turismo Interativo',
+            description: 'Mapa imersivo com pontos turísticos, fotos e informações detalhadas.',
+            layout: 'immersive',
+            focus: 'map',
+            elements: ['photos', 'videos', 'map', 'tourism']
+        }
+    };
+    
+    return templates[templateId];
+}
+
+function generateTemplatePreview(templateData) {
+    return `
+        <div class="template-preview-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>${templateData.title}</h4>
+                    <p class="text-muted">${templateData.description}</p>
+                    
+                    <div class="template-details">
+                        <div class="row">
+                            <div class="col-6">
+                                <strong>Layout:</strong> ${templateData.layout}
+                            </div>
+                            <div class="col-6">
+                                <strong>Foco:</strong> ${templateData.focus === 'story' ? 'História' : templateData.focus === 'map' ? 'Mapa' : 'Equilibrado'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="template-elements mt-3">
+                        <h6>Elementos Incluídos:</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            ${templateData.elements.map(element => 
+                                `<span class="badge bg-primary">${element}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="template-preview-visual">
+                        <img src="https://via.placeholder.com/400x300/007bff/ffffff?text=Preview+${templateData.title}" 
+                             class="img-fluid rounded" alt="Preview">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

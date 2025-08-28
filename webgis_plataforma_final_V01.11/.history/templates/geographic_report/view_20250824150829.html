@@ -1,0 +1,638 @@
+{% extends 'layout.html' %}
+{% block title %}{{ report.title if report else 'Relatório Geográfico' }}{% endblock %}
+
+{% block content %}
+<div class="geographic-report-viewer">
+    <!-- Header do Relatório -->
+    <div class="report-header" id="report-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="report-title" id="report-title">
+                        {{ report.title if report else 'Carregando...' }}
+                    </h1>
+                    <p class="report-description" id="report-description">
+                        {{ report.description if report else 'Carregando descrição...' }}
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="report-controls">
+                        <button class="btn btn-outline-light btn-sm me-2" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button class="btn btn-outline-light btn-sm" onclick="toggleAutoplay()">
+                            <i class="fas fa-play" id="autoplay-icon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interface Principal -->
+    <div class="report-main">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Painel de Navegação -->
+                <div class="col-md-3">
+                    <div class="navigation-panel">
+                        <div class="panel-header">
+                            <h5>
+                                <i class="fas fa-route me-2"></i>Navegação
+                            </h5>
+                        </div>
+                        <div class="stops-list" id="stops-list">
+                            <!-- Lista de paradas será carregada aqui -->
+                            <div class="text-center py-4">
+                                <i class="fas fa-spinner fa-spin fa-2x text-muted mb-2"></i>
+                                <p class="text-muted">Carregando paradas...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mapa Principal -->
+                <div class="col-md-6">
+                    <div class="map-container">
+                        <div id="main-map" style="height: 70vh; width: 100%;">
+                            <!-- Mapa será carregado aqui -->
+                            <div class="d-flex align-items-center justify-content-center h-100">
+                                <div class="text-center">
+                                    <i class="fas fa-map-marked-alt fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Carregando mapa...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Painel de Conteúdo -->
+                <div class="col-md-3">
+                    <div class="content-panel">
+                        <div class="panel-header">
+                            <h5>
+                                <i class="fas fa-file-alt me-2"></i>Conteúdo
+                            </h5>
+                        </div>
+                        <div class="content-area" id="content-area">
+                            <div class="text-center py-4">
+                                <i class="fas fa-hand-pointer fa-2x text-muted mb-2"></i>
+                                <p class="text-muted">Selecione uma parada para ver o conteúdo</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de Navegação -->
+    <div class="navigation-controls">
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-primary" onclick="previousStop()" id="prev-btn" disabled>
+                            <i class="fas fa-chevron-left me-2"></i>Anterior
+                        </button>
+                        
+                        <div class="progress-container">
+                            <div class="progress" style="width: 200px; height: 6px;">
+                                <div class="progress-bar" id="story-progress" role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted mt-1 d-block">
+                                <span id="current-stop">0</span> de <span id="total-stops">0</span>
+                            </small>
+                        </div>
+                        
+                        <button class="btn btn-outline-primary" onclick="nextStop()" id="next-btn">
+                            Próximo<i class="fas fa-chevron-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Conteúdo Completo -->
+<div class="modal fade" id="contentModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="content-modal-title">Conteúdo da Parada</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="content-modal-body">
+                <!-- Conteúdo completo será carregado aqui -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Galeria de Imagens -->
+<div class="modal fade" id="imageGalleryModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Galeria de Imagens</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="image-carousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner" id="carousel-inner">
+                        <!-- Imagens serão carregadas aqui -->
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#image-carousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#image-carousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.geographic-report-viewer {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.report-header {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2rem 0;
+    backdrop-filter: blur(10px);
+}
+
+.report-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.report-description {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 0;
+}
+
+.report-main {
+    padding: 2rem 0;
+    min-height: 70vh;
+}
+
+.navigation-panel,
+.content-panel {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    height: 70vh;
+    overflow: hidden;
+}
+
+.panel-header {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 10px 10px 0 0;
+}
+
+.panel-header h5 {
+    margin: 0;
+    color: #495057;
+}
+
+.stops-list {
+    padding: 1rem;
+    overflow-y: auto;
+    height: calc(100% - 70px);
+}
+
+.stop-item {
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stop-item:hover {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+}
+
+.stop-item.active {
+    border-color: #007bff;
+    background-color: #e3f2fd;
+}
+
+.stop-item h6 {
+    margin: 0 0 0.5rem 0;
+    color: #495057;
+}
+
+.stop-item p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.map-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.content-area {
+    padding: 1rem;
+    overflow-y: auto;
+    height: calc(100% - 70px);
+}
+
+.navigation-controls {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem 0;
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.progress-container {
+    text-align: center;
+}
+
+.progress {
+    background-color: #e9ecef;
+    border-radius: 10px;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    border-radius: 10px;
+}
+
+.content-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.content-card h6 {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.content-card p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.media-item {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.media-item:hover {
+    transform: scale(1.05);
+}
+
+.media-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.media-item .media-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    color: #6c757d;
+    font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+    .report-title {
+        font-size: 2rem;
+    }
+    
+    .col-md-3,
+    .col-md-6 {
+        margin-bottom: 1rem;
+    }
+    
+    .navigation-panel,
+    .content-panel,
+    .map-container {
+        height: auto;
+        min-height: 300px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link href="{{ url_for('static', filename='css/geographic_report.css') }}" rel="stylesheet">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/geographic_report_data.js') }}"></script>
+<script src="{{ url_for('static', filename='js/geographic_report_viewer.js') }}"></script>
+<script>
+// Inicialização do visualizador
+document.addEventListener('DOMContentLoaded', function() {
+    initializeViewer();
+});
+
+let currentStopIndex = 0;
+let totalStops = 0;
+let autoplayEnabled = false;
+let autoplayInterval = null;
+
+function initializeViewer() {
+    const reportId = window.location.pathname.split('/').pop();
+    loadReport(reportId);
+}
+
+function loadReport(reportId) {
+    // Simular carregamento do relatório
+    console.log(`Carregando relatório ${reportId}`);
+    
+    // Simular dados de exemplo
+    setTimeout(() => {
+        const sampleStops = [
+            {
+                id: 1,
+                title: 'Introdução',
+                description: 'Visão geral da área de estudo',
+                content: {
+                    text: 'Esta é uma introdução ao nosso relatório geográfico. Aqui você encontrará informações sobre a área de estudo e os objetivos da análise.',
+                    images: ['sample1.jpg', 'sample2.jpg'],
+                    videos: [],
+                    documents: ['relatorio.pdf'],
+                    charts: []
+                }
+            },
+            {
+                id: 2,
+                title: 'Análise Demográfica',
+                description: 'Características populacionais da região',
+                content: {
+                    text: 'Análise detalhada da demografia da região, incluindo densidade populacional, distribuição etária e indicadores socioeconômicos.',
+                    images: ['demografia1.jpg', 'demografia2.jpg'],
+                    videos: ['video_demografia.mp4'],
+                    documents: ['analise_demografica.pdf'],
+                    charts: ['grafico_populacao.png']
+                }
+            },
+            {
+                id: 3,
+                title: 'Infraestrutura',
+                description: 'Análise da infraestrutura disponível',
+                content: {
+                    text: 'Avaliação da infraestrutura da região, incluindo transportes, serviços públicos e equipamentos urbanos.',
+                    images: ['infra1.jpg', 'infra2.jpg', 'infra3.jpg'],
+                    videos: [],
+                    documents: ['relatorio_infraestrutura.pdf'],
+                    charts: ['grafico_infraestrutura.png']
+                }
+            }
+        ];
+        
+        totalStops = sampleStops.length;
+        document.getElementById('total-stops').textContent = totalStops;
+        
+        loadStopsList(sampleStops);
+        loadMap();
+        updateNavigation();
+        
+        // Selecionar primeira parada
+        selectStop(0);
+    }, 1000);
+}
+
+function loadStopsList(stops) {
+    const container = document.getElementById('stops-list');
+    
+    // Remover mensagem de carregamento
+    const loadingElement = container.querySelector('.text-center');
+    if (loadingElement) {
+        loadingElement.remove();
+    }
+    
+    stops.forEach((stop, index) => {
+        const stopElement = document.createElement('div');
+        stopElement.className = 'stop-item';
+        stopElement.setAttribute('data-stop-index', index);
+        stopElement.onclick = () => selectStop(index);
+        
+        stopElement.innerHTML = `
+            <h6>${stop.title}</h6>
+            <p>${stop.description}</p>
+        `;
+        
+        container.appendChild(stopElement);
+    });
+}
+
+function selectStop(index) {
+    if (index < 0 || index >= totalStops) return;
+    
+    // Atualizar índice atual
+    currentStopIndex = index;
+    
+    // Atualizar seleção visual
+    document.querySelectorAll('.stop-item').forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+    });
+    
+    // Atualizar navegação
+    updateNavigation();
+    
+    // Atualizar progresso
+    updateProgress();
+    
+    // Carregar conteúdo da parada
+    loadStopContent(index);
+    
+    // Atualizar mapa (simulado)
+    updateMapView(index);
+}
+
+function loadStopContent(index) {
+    const contentArea = document.getElementById('content-area');
+    
+    // Simular conteúdo baseado no índice
+    const sampleContent = [
+        {
+            title: 'Introdução',
+            text: 'Esta é uma introdução ao nosso relatório geográfico. Aqui você encontrará informações sobre a área de estudo e os objetivos da análise.',
+            media: ['sample1.jpg', 'sample2.jpg', 'relatorio.pdf']
+        },
+        {
+            title: 'Análise Demográfica',
+            text: 'Análise detalhada da demografia da região, incluindo densidade populacional, distribuição etária e indicadores socioeconômicos.',
+            media: ['demografia1.jpg', 'demografia2.jpg', 'video_demografia.mp4', 'analise_demografica.pdf', 'grafico_populacao.png']
+        },
+        {
+            title: 'Infraestrutura',
+            text: 'Avaliação da infraestrutura da região, incluindo transportes, serviços públicos e equipamentos urbanos.',
+            media: ['infra1.jpg', 'infra2.jpg', 'infra3.jpg', 'relatorio_infraestrutura.pdf', 'grafico_infraestrutura.png']
+        }
+    ];
+    
+    const content = sampleContent[index] || sampleContent[0];
+    
+    contentArea.innerHTML = `
+        <div class="content-card">
+            <h6>${content.title}</h6>
+            <p>${content.text}</p>
+        </div>
+        
+        <div class="content-card">
+            <h6>Mídia e Documentos</h6>
+            <div class="media-grid">
+                ${content.media.map(media => {
+                    if (media.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                        return `<div class="media-item" onclick="showImage('${media}')">
+                            <img src="/static/images/${media}" alt="${media}" onerror="this.parentElement.innerHTML='<div class=\\'media-icon\\'><i class=\\'fas fa-image\\'></i></div>'">
+                        </div>`;
+                    } else if (media.match(/\.(mp4|avi|mov)$/i)) {
+                        return `<div class="media-item" onclick="showVideo('${media}')">
+                            <div class="media-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                        </div>`;
+                    } else if (media.match(/\.pdf$/i)) {
+                        return `<div class="media-item" onclick="showDocument('${media}')">
+                            <div class="media-icon">
+                                <i class="fas fa-file-pdf"></i>
+                            </div>
+                        </div>`;
+                    } else {
+                        return `<div class="media-item" onclick="showChart('${media}')">
+                            <div class="media-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                        </div>`;
+                    }
+                }).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function updateNavigation() {
+    document.getElementById('prev-btn').disabled = currentStopIndex === 0;
+    document.getElementById('next-btn').disabled = currentStopIndex === totalStops - 1;
+    document.getElementById('current-stop').textContent = currentStopIndex + 1;
+}
+
+function updateProgress() {
+    const progress = ((currentStopIndex + 1) / totalStops) * 100;
+    document.getElementById('story-progress').style.width = `${progress}%`;
+}
+
+function previousStop() {
+    if (currentStopIndex > 0) {
+        selectStop(currentStopIndex - 1);
+    }
+}
+
+function nextStop() {
+    if (currentStopIndex < totalStops - 1) {
+        selectStop(currentStopIndex + 1);
+    }
+}
+
+function toggleAutoplay() {
+    autoplayEnabled = !autoplayEnabled;
+    const icon = document.getElementById('autoplay-icon');
+    
+    if (autoplayEnabled) {
+        icon.className = 'fas fa-pause';
+        startAutoplay();
+    } else {
+        icon.className = 'fas fa-play';
+        stopAutoplay();
+    }
+}
+
+function startAutoplay() {
+    autoplayInterval = setInterval(() => {
+        if (currentStopIndex < totalStops - 1) {
+            nextStop();
+        } else {
+            stopAutoplay();
+            autoplayEnabled = false;
+            document.getElementById('autoplay-icon').className = 'fas fa-play';
+        }
+    }, 5000); // 5 segundos por parada
+}
+
+function stopAutoplay() {
+    if (autoplayInterval) {
+        clearInterval(autoplayInterval);
+        autoplayInterval = null;
+    }
+}
+
+function loadMap() {
+    // Simular carregamento do mapa
+    console.log('Carregando mapa...');
+}
+
+function updateMapView(index) {
+    // Simular atualização da visualização do mapa
+    console.log(`Atualizando visualização do mapa para parada ${index}`);
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+function showImage(imagePath) {
+    // Implementar visualização de imagem
+    console.log(`Mostrando imagem: ${imagePath}`);
+}
+
+function showVideo(videoPath) {
+    // Implementar visualização de vídeo
+    console.log(`Mostrando vídeo: ${videoPath}`);
+}
+
+function showDocument(documentPath) {
+    // Implementar visualização de documento
+    console.log(`Mostrando documento: ${documentPath}`);
+}
+
+function showChart(chartPath) {
+    // Implementar visualização de gráfico
+    console.log(`Mostrando gráfico: ${chartPath}`);
+}
+</script>
+{% endblock %}

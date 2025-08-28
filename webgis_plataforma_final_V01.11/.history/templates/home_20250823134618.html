@@ -1,0 +1,204 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <!-- Seção de Boas-vindas -->
+    <div class="col-lg-4 mb-4">
+      <div class="text-center py-5">
+        <h1 class="text-primary">Bem-vindo ao WebGIS</h1>
+        <p class="lead">Plataforma completa de geoprocessamento e análise espacial.</p>
+        <div class="d-flex gap-2 justify-content-center mb-4">
+          <a class="btn btn-primary btn-lg" href="{{ url_for('login') }}">
+            <i class="fas fa-sign-in-alt me-2"></i>Entrar
+          </a>
+          <a class="btn btn-outline-primary btn-lg" href="{{ url_for('precos') }}">
+            <i class="fas fa-tags me-2"></i>Ver Preços
+          </a>
+        </div>
+        
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">🌐 Portal da Empresa</h5>
+            <p class="card-text">Se você sabe a URL do portal da sua empresa, acesse diretamente:</p>
+            <code>/portal/&lt;slug&gt;</code>
+            <small class="d-block text-muted mt-2">Ex.: {{ request.host_url }}portal/minha-empresa</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de Recursos -->
+    <div class="col-lg-8">
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-primary mb-3">
+                <i class="fas fa-map-marked-alt"></i>
+              </div>
+              <h4>Mapas Interativos</h4>
+              <p class="text-muted">Crie mapas profissionais com dados geográficos avançados</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-success mb-3">
+                <i class="fas fa-layer-group"></i>
+              </div>
+              <h4>Camadas Personalizadas</h4>
+              <p class="text-muted">Organize seus dados em camadas temáticas e projetos</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-info mb-3">
+                <i class="fas fa-share-alt"></i>
+              </div>
+              <h4>Compartilhamento</h4>
+              <p class="text-muted">Compartilhe mapas públicos ou privados com sua equipe</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="display-4 text-warning mb-3">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h4>Análise Espacial</h4>
+              <p class="text-muted">Ferramentas avançadas para análise e visualização de dados</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CTA para Preços -->
+      <div class="card bg-gradient-primary text-white border-0 shadow-lg">
+        <div class="card-body text-center py-4">
+          <h3 class="mb-3">
+            <i class="fas fa-calculator me-2"></i>Preços Transparentes
+          </h3>
+          <p class="lead mb-4">Descubra o plano ideal para sua empresa com nossa calculadora personalizada</p>
+          <div class="row text-center mb-3">
+             <div class="col-md-4">
+               <div class="bg-white bg-opacity-10 rounded p-2">
+                 <h5 class="mb-1">Starter</h5>
+                 <h4 class="mb-0" id="home-starter-price">Carregando...</h4>
+                 <small class="text-success" id="home-starter-tier-discount" style="display: none;">
+                   <i class="fas fa-tags me-1"></i>
+                   <span id="home-starter-discount-amount"></span> em desconto
+                 </small>
+               </div>
+             </div>
+             <div class="col-md-4">
+               <div class="bg-white bg-opacity-20 rounded p-2">
+                 <h5 class="mb-1">Professional</h5>
+                 <h4 class="mb-0" id="home-professional-price">Carregando...</h4>
+                 <small class="text-success" id="home-professional-tier-discount" style="display: none;">
+                   <i class="fas fa-tags me-1"></i>
+                   <span id="home-professional-discount-amount"></span> em desconto
+                 </small>
+               </div>
+             </div>
+             <div class="col-md-4">
+               <div class="bg-white bg-opacity-10 rounded p-2">
+                 <h5 class="mb-1">Enterprise</h5>
+                 <div class="mb-1" id="home-enterprise-original" style="display: none;">
+                   <small class="text-decoration-line-through">R$ 0,00/mês</small>
+                 </div>
+                 <h4 class="mb-0" id="home-enterprise-price">Carregando...</h4>
+                 <small class="badge bg-success" id="home-enterprise-discount" style="display: none;">0% OFF</small>
+                 <small class="text-success d-block" id="home-enterprise-tier-discount" style="display: none;">
+                   <i class="fas fa-tags me-1"></i>
+                   <span id="home-enterprise-discount-amount"></span> em desconto
+                 </small>
+               </div>
+             </div>
+           </div>
+           <a href="{{ url_for('precos') }}" class="btn btn-light btn-lg">
+             <i class="fas fa-tags me-2"></i>Ver Planos e Preços
+           </a>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- JavaScript para carregar preços dinamicamente -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Carregar preços dos planos dinamicamente
+    loadHomePlanPrices();
+    
+    // Atualizar preços a cada 30 segundos
+    setInterval(loadHomePlanPrices, 30000);
+});
+
+async function loadHomePlanPrices() {
+    try {
+        const response = await fetch('/api/pricing/plans');
+        if (!response.ok) {
+            throw new Error(`Erro HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (data.success) {
+            updateHomePlanPrices(data.plans);
+        } else {
+            console.error('Erro ao carregar preços:', data.error);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar preços dos planos:', error);
+    }
+}
+
+function updateHomePlanPrices(plans) {
+    // Atualizar plano Starter
+    if (plans.starter) {
+        document.getElementById('home-starter-price').textContent = `R$ ${plans.starter.final_price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}/mês`;
+        
+        if (plans.starter.total_tier_discount > 0) {
+            document.getElementById('home-starter-discount-amount').textContent = `R$ ${plans.starter.total_tier_discount.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('home-starter-tier-discount').style.display = 'block';
+        }
+    }
+    
+    // Atualizar plano Professional
+    if (plans.professional) {
+        document.getElementById('home-professional-price').textContent = `R$ ${plans.professional.final_price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}/mês`;
+        
+        if (plans.professional.total_tier_discount > 0) {
+            document.getElementById('home-professional-discount-amount').textContent = `R$ ${plans.professional.total_tier_discount.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('home-professional-tier-discount').style.display = 'block';
+        }
+    }
+    
+    // Atualizar plano Enterprise
+    if (plans.enterprise) {
+        document.getElementById('home-enterprise-price').textContent = `R$ ${plans.enterprise.final_price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}/mês`;
+        
+        // Mostrar preço original e desconto de 25%
+        if (plans.enterprise.discount > 0) {
+            document.getElementById('home-enterprise-original').querySelector('small').textContent = `R$ ${plans.enterprise.original_price.toLocaleString('pt-BR', {minimumFractionDigits: 2})}/mês`;
+            document.getElementById('home-enterprise-original').style.display = 'block';
+            document.getElementById('home-enterprise-discount').textContent = `${plans.enterprise.discount}% OFF`;
+            document.getElementById('home-enterprise-discount').style.display = 'inline-block';
+        }
+        
+        if (plans.enterprise.total_tier_discount > 0) {
+            document.getElementById('home-enterprise-discount-amount').textContent = `R$ ${plans.enterprise.total_tier_discount.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('home-enterprise-tier-discount').style.display = 'block';
+        }
+    }
+}
+</script>
+
